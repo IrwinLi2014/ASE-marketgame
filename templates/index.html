@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<!-- Bootstrap core CSS -->
-    	<link rel="stylesheet" href="../css/bootstrap.min.css">
+    	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
     	
     	<!-- Custom styles -->
-		<link rel="stylesheet" href="../css/styles.css">
+		<link rel="stylesheet" href="../static/css/styles.css">
     	<title>Login Page</title>
 	</head>
 	<body>
@@ -13,7 +13,7 @@
 			<h1><center>The Stock Market Game</center></h1>
 			
 			<form class="form-signin">
-				<p class="form-signin-heading"><strong>Log In</strong> or <a href="create-account.html">Create a new account</a></p>
+				<p class="form-signin-heading"><strong>Log In</strong> or <a href="{{ url_for('create_account') }}">Create a new account</a></p>
 				<!-- sr-only=screenreader(?) -->
 				<label for="inputEmail" class="sr-only">Email Address</label> 
 				<input type="email" id="inputEmail" class="form-control" placeholder="email" required autofocus>

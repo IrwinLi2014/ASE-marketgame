@@ -1,0 +1,7 @@
+flask
+oauth2client
+requests
+requests_oauth
+pytest
+pytest-cov
+Flask-PyMongo
