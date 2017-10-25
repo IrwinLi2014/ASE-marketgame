@@ -47,12 +47,12 @@ def login():
     print(login_user)
 
     if login_user:
-        if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
+        if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['username'] = request.form['username']
             print("made it???")
             return redirect(url_for('home'))
 
-    return render_template("index.html")
+    return "ERROR: Invalid username or password"
 
 if __name__ == "__main__":
     app.secret_key = 'mysecret'
