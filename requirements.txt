@@ -5,3 +5,4 @@ requests_oauth
 pytest
 pytest-cov
 Flask-PyMongo
+bcrypt

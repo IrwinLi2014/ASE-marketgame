@@ -7,18 +7,25 @@
     	<!-- Custom styles -->
 		<link rel="stylesheet" href="../static/css/styles.css">
     	<title>Login Page</title>
+
+    	<!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    	<script type="text/javascript">
+    		$(document).ready(function() {
+
+    		})
+    	</script> -->
 	</head>
 	<body>
 		<div class="container">
 			<h1><center>The Stock Market Game</center></h1>
 			
-			<form class="form-signin">
+			<form method=POST action="{{ url_for('login') }}" class="form-signin">
 				<p class="form-signin-heading"><strong>Log In</strong> or <a href="{{ url_for('create_account') }}">Create a new account</a></p>
 				<!-- sr-only=screenreader(?) -->
 				<label for="inputEmail" class="sr-only">Email Address</label> 
-				<input type="email" id="inputEmail" class="form-control" placeholder="email" required autofocus>
+				<input type="email" id="inputEmail" name="username" class="form-control" placeholder="email" required autofocus>
 				<label for="inputPassword" class="sr-only">Password</label>
-        		<input type="password" id="inputPassword" class="form-control" placeholder="password" required>
+        		<input type="password" id="inputPassword" name="password" class="form-control" placeholder="password" required>
         		<div class="checkbox">
         			<label><input type="checkbox" value="remember-me"> Remember me</label>
         		</div>
