@@ -74,7 +74,7 @@ def add_stock():
     users = mongo.db.users
     print(session)
 
-    users.findOneAndUpdate(
+    users.update_one(
         { 'name' : session["user"] },
         {'$push': {
             'stocks': {
