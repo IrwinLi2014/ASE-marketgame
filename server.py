@@ -50,11 +50,18 @@ def login():
     if login_user:
         if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['user'] = request.form['username']
-            print("made it???")
             return redirect(url_for('home'))
 
     return "ERROR: Invalid username or password"
 
+
+@app.route("/profile", methods=["GET"])
+def profile():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    print(login_user["stocks"])
+    stocks = login_user["stocks"]
+    return render_template("profile.html", stocks=stocks)
 
 
 '''
