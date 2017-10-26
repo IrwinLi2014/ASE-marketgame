@@ -40,13 +40,19 @@
         		<table class="table">
         			<thead>
         				<th scope="col">Ticker</th>
-      					<th scope="col">Last Name</th>
+      					<th scope="col">Shares</th>
+                <th scope="col">Price</th>
+                <th scope="col">Commission</th>
         			</thead>
         			<tbody>
-        				{% for ticker in tickers %}
-            			<td>{{ticker}}</td>
-            			<td>Temp</td>
-            			{% endfor %}
+        				{% for stock in stocks %}
+                  <tr>
+              			<td>{{stock["ticker"]}}</td>
+              			<td>{{stock["shares"]}}</td>
+                    <td>{{stock["price"]}}</td>
+                    <td>{{stock["commission"]}}</td>
+                  </tr>
+          			{% endfor %}
         			</tbody>
         		</table>
             	<!--{% for ticker in tickers %}
