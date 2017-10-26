@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel='stylesheet' href="../static/css/styles.css">
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class='container'>
+
+	<h1>{{ ticker }}</h1>
+
+	<form method=POST action="{{ url_for('add_stock') }}">
+
+		<input type='hidden' name='ticker' value='{{ ticker }}'>
+		
+		<label for='date'>Date</label>
+    	<input type='date' name='date'>
+
+    	<label for='shares'>Shares</label>
+    	<input type='number' name='shares'>
+
+    	<label for='price'>Price</label>
+    	<input type='number' name='price'>
+
+    	<label for='commission'>Commission</label>
+    	<input type='number' name='commission'>
+
+    	<br><br>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
+
+	</form>
+
+</div>
+</body>
+
+</html>
