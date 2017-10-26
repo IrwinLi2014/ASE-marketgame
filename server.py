@@ -61,6 +61,9 @@ def profile():
     login_user = users.find_one({'name' : session['user']})
     print(login_user["stocks"])
     tickers = [stock["ticker"] for stock in login_user["stocks"]]
+    shares = [stock["shares"] for stock in login_user["stocks"]]
+    prices = [stock["price"] for stock in login_user["stocks"]]
+    commissions = [stock["commission"] for stock in login_user["stocks"]]
     return render_template("profile.html", tickers=tickers)
 
 

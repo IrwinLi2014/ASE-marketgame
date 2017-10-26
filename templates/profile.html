@@ -37,9 +37,22 @@
 		  <main role="main" class="container">
       		<div class="jumbotron">
         		<h1>My Stocks</h1>
-            {% for ticker in tickers %}
-            <p>{{ticker}}</p>
-            {% endfor %}
+        		<table class="table">
+        			<thead>
+        				<th scope="col">Ticker</th>
+      					<th scope="col">Last Name</th>
+        			</thead>
+        			<tbody>
+        				{% for ticker in tickers %}
+            			<td>{{ticker}}</td>
+            			<td>Temp</td>
+            			{% endfor %}
+        			</tbody>
+        		</table>
+            	<!--{% for ticker in tickers %}
+            	<p>{{ticker}}</p>
+            	{% endfor %}-->
+            
       		</div>
     	</main>
 
