@@ -2,42 +2,72 @@
 <html lang="en">
 
 <head>
+	<!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	-->
+	<link rel="stylesheet" href="../static/css/styles.css">
 	<meta charset="utf-8">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel='stylesheet' href="../static/css/styles.css">
+  	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	-->
 	<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-<div class='container'>
+		<!-- Navigation -->
+		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark mb-4">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        		<span class="navbar-toggler-icon"></span>
+      		</button>
+      		
+      		<div class="collapse navbar-collapse" id="navbarCollapse">
+        		<ul class="navbar-nav mr-auto">
+          			<li class="nav-item active">
+            			<a class="nav-link" href="home.html">Home <span class="sr-only">(current)</span></a>
+          			</li>
+          			<li class="nav-item">
+            			<a class="nav-link" href="#">Profile</a>
+          			</li>
+          			<li class="nav-item">
+            			<a class="nav-link" href="#">Games</a>
+          			</li>
+        		</ul>
+        		<form method=POST action="{{ url_for('search') }}" class="form-inline mt-2 mt-md-0">
+          			<input class="form-control mr-sm-2" type="text" name="search" placeholder="search for stock" aria-label="Search">
+          			<button class="btn btn-outline-success my-2 my-sm-0 srch-btn" type="submit">Search</button>
+        		</form>
+      		</div>	
+		</nav>
+		
+	<div class='container'>
+	
+		<h1>{{ ticker }}</h1>
 
-	<h1>{{ ticker }}</h1>
-
-	<form method=POST action="{{ url_for('add_stock') }}">
+		<form method=POST action="{{ url_for('add_stock') }}">
 
 		<input type='hidden' name='ticker' value='{{ ticker }}'>
 		
-		<label for='date'>Date</label>
-    	<input type='date' name='date'>
+			<label for='date'>Date</label>
+    		<input type='date' name='date'>
 
-    	<label for='shares'>Shares</label>
-    	<input type='number' name='shares'>
+    		<label for='shares'>Shares</label>
+    		<input type='number' name='shares'>
 
-    	<label for='price'>Price</label>
-    	<input type='number' name='price'>
+    		<label for='price'>Price</label>
+    		<input type='number' name='price'>
 
-    	<label for='commission'>Commission</label>
-    	<input type='number' name='commission'>
+    		<label for='commission'>Commission</label>
+    		<input type='number' name='commission'>
 
-    	<br><br>
+    		<br><br>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
+        	<button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
 
-	</form>
+		</form>
 
-</div>
+	</div>
 </body>
 
 </html>
