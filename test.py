@@ -7,7 +7,7 @@ import unittest
 TEST_DB = 'test.db'
 
 class MarketGameTests(unittest.TestCase):
-	def setup(self):
+	def setUp(self):
 		app.config['TESTING'] = True
 		app.config['MONGODB_DATABASE'] = 'test'
 		self.app = app.test_client()
