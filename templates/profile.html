@@ -41,7 +41,10 @@
         			<thead>
         				<th scope="col">Ticker</th>
       					<th scope="col">Shares</th>
+                <th scope="col">Current Value</th>
                 <th scope="col">Price</th>
+                <th scope="col">Investment</th>
+                <th scope="col">Gain/Loss</th>
                 <th scope="col">Commission</th>
         			</thead>
         			<tbody>
@@ -49,7 +52,10 @@
                   <tr>
               			<td>{{stock["ticker"]}}</td>
               			<td>{{stock["shares"]}}</td>
+                    <td>{{stock["cur"]}}</td>
                     <td>{{stock["price"]}}</td>
+                    <td>{{stock["investment"]}}</td>
+                    <td>{{stock["gain/loss"]}}</td>
                     <td>{{stock["commission"]}}</td>
                   </tr>
           			{% endfor %}

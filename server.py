@@ -2,6 +2,10 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
 import bcrypt
+import pandas_datareader.data as web
+import datetime
+import sys
+import requests
 
 app = Flask(__name__)
 
@@ -72,7 +76,24 @@ Yiming TO-DO:
 '''
 @app.route("/search", methods=["POST"])
 def search():
-    return render_template("search.html", ticker=request.form['search'])
+    quote_data = web.get_quote_yahoo(request.form['search'])
+    cur = quote_data.iloc[0]['last']
+
+
+    url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(request.form['search'])
+
+    result = requests.get(url).json()
+
+    name_found = False
+    for x in result['ResultSet']['Result']:
+        if x['symbol'] == request.form['search']:
+            name = x['name']
+            name_found = True
+    if name_found == False:
+        return "ERROR: invalid ticker"
+    
+
+    return render_template("search.html", ticker=request.form['search'], cur = cur, name = name)
 
 
 @app.route("/add_stock", methods=["POST"])
@@ -81,19 +102,30 @@ def add_stock():
     users = mongo.db.users
     print(session)
 
+    quote_data = web.get_quote_yahoo(request.form['search'])
+    cur = quote_data.iloc[0]['last']
+    gl = cur - request.form['price']
+    investment = request.form['shares'] * request.form['price']
     users.update_one(
         { 'name' : session["user"] },
         {'$push': {
             'stocks': {
                 'ticker': request.form['ticker'],
                 'date': request.form['date'],
+                'cur' : cur,
                 'shares': request.form['shares'],
                 'price': request.form['price'],
+                'investment': investment,
+                'gain/loss': gl,
                 'commission': request.form['commission']
                 }
             }
         }
     )
+
+    
+
+
 
 
     return redirect(url_for("home"))
