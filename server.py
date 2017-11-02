@@ -77,7 +77,7 @@ Yiming TO-DO:
 @app.route("/search", methods=["POST"])
 def search():
 
-    quote_data = web.DataReader(request.form['search'], 'google', start, start)
+    quote_data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
     cur = quote_data['Close'].iloc[-1]
 
 
@@ -102,7 +102,7 @@ def add_stock():
 
     users = mongo.db.users
     print(session)
-    quote_data = web.DataReader(request.form['search'], 'google', start, start)
+    quote_data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
     cur = quote_data['Close'].iloc[-1]
     
     gl = cur - request.form['price']
