@@ -76,8 +76,9 @@ Yiming TO-DO:
 '''
 @app.route("/search", methods=["POST"])
 def search():
-    quote_data = web.get_quote_yahoo(request.form['search'])
-    cur = quote_data.iloc[0]['last']
+
+    quote_data = web.DataReader(request.form['search'], 'google', start, start)
+    cur = quote_data['Close'].iloc[-1]
 
 
     url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(request.form['search'])
@@ -101,9 +102,9 @@ def add_stock():
 
     users = mongo.db.users
     print(session)
-
-    quote_data = web.get_quote_yahoo(request.form['search'])
-    cur = quote_data.iloc[0]['last']
+    quote_data = web.DataReader(request.form['search'], 'google', start, start)
+    cur = quote_data['Close'].iloc[-1]
+    
     gl = cur - request.form['price']
     investment = request.form['shares'] * request.form['price']
     users.update_one(
