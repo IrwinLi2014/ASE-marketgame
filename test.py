@@ -35,13 +35,14 @@ class MarketGameTests(unittest.TestCase):
 
 	def test_login(self):
 		response = self.login('abc@gmail.com', 'hello')
-		self.assertEqual(response.status_code,200)
+		self.assertEqual(response.status_code, 200)
 
 	def add_stock(self, ticker, date, shares, price, commission):
 		return self.app.post('/add_stock', data=dict(ticker=ticker, date=date, shares=shares, price=price, commission=commission), follow_redirects=True)
 
 	def test_add_stock(self):
-		response = self.add_stock('goog', '1/1/2017', 50, 200, 50)
+		self.login("abc@gmail.com", "hello")
+		response = self.add_stock('GOOG', '1/1/2017', "50", "200", "50")
 		self.assertEqual(response.status_code,200)
 
 
