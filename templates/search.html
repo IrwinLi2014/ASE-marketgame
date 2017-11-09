@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 
 {% block title %}Search{% endblock %}
-
+{% block nav %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Games</a>
+                </li>
+{% endblock %}
 {% block body %}
   <h1>{{ name }} ({{ ticker }})</h1>
   <h2>${{ close_price }}</h2> 
