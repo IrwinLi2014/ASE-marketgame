@@ -59,6 +59,13 @@ def login():
     return "ERROR: Invalid username or password"
 
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    print("\n\n\nhello?????\n\n\n")
+    del session['user']
+    return render_template("index.html")
+       
+
 @app.route("/profile", methods=["GET"])
 def profile():
     users = mongo.db.users
