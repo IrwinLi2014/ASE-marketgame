@@ -80,6 +80,13 @@ body {
 	background-color: #118c4e;
 	border-color: #118c4e;
 }
+.logout-btn {
+	padding: 8px;
+	margin-left: 30px;
+	background-color: #094627;
+	border-color: #ffffff;
+	color: #ffffff;
+}
 .jumbotron {
 	background-color: #ff9009;
 }

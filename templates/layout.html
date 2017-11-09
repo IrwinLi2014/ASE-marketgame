@@ -34,17 +34,19 @@
         		<form method=POST action="{{ url_for('search') }}" class="form-inline mt-2 mt-md-0">
           			<input class="form-control mr-sm-2" type="text" name="search" placeholder="search for stock" aria-label="Search">
           			<button class="btn btn-outline-success my-2 my-sm-0 srch-btn" type="submit">Search</button>
+          			<br>
+          			<button class="btn btn-sm align-middle btn-outline-secondary logout-btn" type="button">Logout</button>
         		</form>
       		</div>	
 		</nav>
 		
 		<main role="main" class="container">
       		<div class="jumbotron">
-			{% block body %}
-			{% endblock %}
+				{% block body %}
+				{% endblock %}
 			</div>
-			{% block content %}
-			{% endblock %}
+				{% block content %}
+				{% endblock %}
 		</main>
 	</body>
 </html>
