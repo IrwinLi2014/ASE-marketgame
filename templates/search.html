@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+{% extends "layout.html" %}
+{% block title %}Search{% endblock %}
+{% block body %}
+	<h1>My Stocks</h1>
+        <table class="table">
+            <thead>
+            <th scope="col">Symbol</th>
+            <th scope="col">Name</th>
+            <th scope="col">Current Value</th>
+            </thead>
+        	<tbody>
+            	<tr>
+                <td>{{ticker}}</td>
+                <td>{{name}}</td>
+                <td>{{cur}}</td>
+                </tr>
+            </tbody>
+        </table>
+{% endblock %}
+{% block content %}
+	<div class='container'>
+=======
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,9 +64,10 @@
       		</div>	
 		</nav>
 
+    <!--
       <main role="main" class="container">
           <div class="jumbotron">
-            <h1>My Stocks</h1>
+            <h1>{{name}}</h1>
             <table class="table">
               <thead>
                 <th scope="col">Symbol</th>
@@ -54,21 +78,23 @@
                 <tr>
                   <td>{{ticker}}</td>
                   <td>{{name}}</td>
-                  <td>{{cur}}</td>
+                  <td>{{close}}</td>
                 </tr>
               </tbody>
             </table>
-              <!--{% for ticker in tickers %}
-              <p>{{ticker}}</p>
-              {% endfor %}-->
-            
           </div>
       </main>
-		
-	<div class='container'>
-	
-		<h1>{{ ticker }}</h1>
+    -->
 
+	<div class='container jumbotron'>
+
+    <!--Display-->
+>>>>>>> eefe982f28c12e02ab3574cac36f00976bd351d1
+	
+		<h1>{{ name }}</h1>
+
+
+    <!--Form-->
 		<form method=POST action="{{ url_for('add_stock') }}">
 
 		<input type='hidden' name='ticker' value='{{ ticker }}'>
@@ -84,14 +110,14 @@
 
     		<label for='commission'>Commission</label>
     		<input type='number' name='commission'>
-
     		<br><br>
 
+<<<<<<< HEAD
         	<button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
+=======
+      <button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
 
+>>>>>>> eefe982f28c12e02ab3574cac36f00976bd351d1
 		</form>
-
 	</div>
-</body>
-
-</html>
+{% endblock %}
