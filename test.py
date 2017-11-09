@@ -32,7 +32,7 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response.status_code, 200)
 
 	def login(self, username, password):
-		return self.app.post('/login', data=dict(username=username, password=password.encode('ascii')), follow_redirects=True)
+		return self.app.post('/login', data=dict(username=username, password=password), follow_redirects=True)
 
 	def test_login(self):
 		response = self.login('abc@gmail.com', 'hello')
