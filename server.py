@@ -55,9 +55,9 @@ def register():
             session['user'] = request.form['username']
             return redirect(url_for("home"))
         else:
-            return "ERROR: Passwords do not match"
-    
-    return "ERROR: Username already exists"
+            return render_template("create_account.html", password_error=True, username_error=False)
+
+    return render_template("create_account.html", password_error=False, username_error=True)
 
 
 
