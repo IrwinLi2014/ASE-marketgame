@@ -7,5 +7,5 @@ pytest
 pytest-cov
 Flask-PyMongo
 bcrypt
-bokeh
+bokeh==0.12.2
 simplejson
