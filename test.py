@@ -56,6 +56,14 @@ class MarketGameTests(unittest.TestCase):
 		response = self.app.post('/search', data=dict(search='goog'))
 		self.assertEqual(response.status_code,200)
 
+	def logout(self):
+		return self.app.post('/logout')
+
+	def test_logout(self):
+		self.login("abc@gmail.com", "hello")
+		response = self.logout()
+		self.assertEqual(response.status_code, 302)
+
 
 
 
