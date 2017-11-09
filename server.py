@@ -77,57 +77,59 @@ Yiming TO-DO:
 @app.route("/search", methods=["POST"])
 def search():
 
-    quote_data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
-    cur = quote_data['Close'].iloc[-1]
+    #convert ticker to all-caps
+    ticker = request.form['search'].upper()
 
-
-    url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(request.form['search'])
-
+    #verify that stock ticker exists
+    url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
     result = requests.get(url).json()
 
     name_found = False
     for x in result['ResultSet']['Result']:
-        if x['symbol'] == request.form['search']:
-            name = x['name']
+        if x['symbol'] == ticker:
+            name = x['name'] #get stock name from ticker
             name_found = True
     if name_found == False:
         return "ERROR: invalid ticker"
-    
 
-    return render_template("search.html", ticker=request.form['search'], cur = cur, name = name)
+    #get stock data from ticker input
+    data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
+    print(data['Close'])
+    close_price = data['Close'].iloc[-1]
+    open_price = data['Open'].iloc[-1]
+    low_price = data['Low'].iloc[-1]
+    high_price = data['High'].iloc[-1]
+    volume = data['Volume'].iloc[-1]
+
+    return render_template("search.html", ticker = ticker, close_price = close_price, open_price = open_price, low_price = low_price, high_price = high_price, name = name)
 
 
 @app.route("/add_stock", methods=["POST"])
 def add_stock():
 
     users = mongo.db.users
-    print(session)
-    quote_data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
-    cur = quote_data['Close'].iloc[-1]
+    #print(session)
+    #data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
+    #close = data['Close'].iloc[-1]
     
-    gl = cur - request.form['price']
-    investment = request.form['shares'] * request.form['price']
+    #gl = cur - request.form['price']
+    #investment = request.form['shares'] * request.form['price']
     users.update_one(
         { 'name' : session["user"] },
         {'$push': {
             'stocks': {
                 'ticker': request.form['ticker'],
                 'date': request.form['date'],
-                'cur' : cur,
+                #'close' : close,
                 'shares': request.form['shares'],
                 'price': request.form['price'],
-                'investment': investment,
-                'gain/loss': gl,
+                #'investment': investment,
+                #'gain/loss': gl,
                 'commission': request.form['commission']
                 }
             }
         }
     )
-
-    
-
-
-
 
     return redirect(url_for("home"))
 
