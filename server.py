@@ -61,9 +61,8 @@ def login():
 
 @app.route("/logout", methods=["POST"])
 def logout():
-    print("\n\n\nhello?????\n\n\n")
     del session['user']
-    return render_template("index.html")
+    return redirect(url_for("index"))
        
 
 @app.route("/profile", methods=["GET"])
