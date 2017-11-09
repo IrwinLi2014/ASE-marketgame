@@ -94,3 +94,8 @@ body {
 .jumbotron h1{
 	color: #ffffff;
 }
+
+tfoot {
+  font-weight:bold;
+}
+

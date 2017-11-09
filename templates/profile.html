@@ -1,29 +1,53 @@
 {% extends "layout.html" %}
 {% block title %}Profile{% endblock %}
 {% block body %}
-	<h1>My Stocks</h1>
+	<h1>My Portfolio</h1>
         <table class="table">
     		<thead>
+                <th scope="col">Name</th>
         		<th scope="col">Ticker</th>
+                <th scope="col">Last Price</th>
+                <th scope="col">Change</th>
+                <th scope="col">Change %</th>
       			<th scope="col">Shares</th>
-                <th scope="col">Current Value</th>
-                <th scope="col">Price</th>
-                <th scope="col">Investment</th>
-                <th scope="col">Gain/Loss</th>
-                <th scope="col">Commission</th>
+                <th scope="col">Cost Basis</th>
+                <th scope="col">Market Value</th>
+                <th scope="col">Gain</th>
+                <th scope="col">Gain %</th>
         	</thead>
         	<tbody>
         		{% for stock in stocks %}
                 <tr>
-              	<td>{{stock["ticker"]}}</td>
-              	<td>{{stock["shares"]}}</td>
-                <td>{{stock["cur"]}}</td>
-                <td>{{stock["price"]}}</td>
-                <td>{{stock["investment"]}}</td>
-                <td>{{stock["gain/loss"]}}</td>
-                <td>{{stock["commission"]}}</td>
+                    <td>{{ stock["name"] }}</td>
+                    <td>{{ stock["ticker"] }}</td>
+                    <td>{{ stock["price"] }}</td>
+                    <td>{{ stock["change"] }}</td>
+                    <td>{{ '{0:.2f}'.format(stock["change_percentage"]) + "%" }}</td>
+                    <td>{{ stock["shares"] }}</td>
+                    <td>{{ stock["cost"] }}</td>
+                    <td>{{ stock["market_value"] }}</td>
+                    <td>{{ stock["gain"] }}</td>
+                    <td>{{ '{0:.0f}'.format(stock["gain_percentage"]) + "%" }}</td>
                 </tr>
           		{% endfor %}
-        	</tbody>
+            </tbody>
+
+            <!-- Summation row-->
+            <tfoot>
+                <tr>
+                    <td>Portfolio Value</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ total_cost }}</td>
+                    <td>{{ total_market_value }}</td>
+                    <td>{{ total_gain }}</td>
+                    <td>{{ '{0:.0f}'.format(total_gain_percentage) + "%" }}</td>    
+                </tr>
+            </tfoot>
+        	
+
         </table>
 {% endblock %}

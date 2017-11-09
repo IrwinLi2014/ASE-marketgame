@@ -1,34 +1,48 @@
-
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
+
+from bokeh.plotting import output_file, show, figure
+from bokeh.palettes import Spectral11
+from bokeh.embed import components 
+
 import bcrypt
-import pandas_datareader.data as web
 import datetime
-import sys
+import pandas
+import pandas_datareader.data as web
 import requests
+import simplejson as json
+import sys
+
 
 app = Flask(__name__)
-
 
 app.config['MONGO_DBNAME'] = 'winydb'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/winydb'
 
 mongo = PyMongo(app)
 
+
+
 @app.route("/")
 @app.route("/index")
 def index():
     return render_template("index.html")
 
+
+
 @app.route("/create_account", methods=["GET"])
 def create_account():
     return render_template("create_account.html")
+
+
 
 @app.route("/home", methods=["GET"])
 def home():
     if "user" in session:
         return render_template("home.html")
     return redirect(url_for("index"))
+
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -45,6 +59,8 @@ def register():
     
     return "ERROR: Username already exists"
 
+
+
 @app.route("/login", methods=["POST"])
 def login():
     users = mongo.db.users
@@ -59,26 +75,47 @@ def login():
     return "ERROR: Invalid username or password"
 
 
+
 @app.route("/logout", methods=["POST"])
 def logout():
     del session['user']
     return redirect(url_for("index"))
        
 
+
 @app.route("/profile", methods=["GET"])
 def profile():
     users = mongo.db.users
     login_user = users.find_one({'name' : session['user']})
-    print(login_user["stocks"])
-    stocks = login_user["stocks"]
-    return render_template("profile.html", stocks=stocks)
+    stocks = login_user['stocks']
+
+    total_cost = 0
+    total_market_value = 0
+    total_gain = 0
+    total_gain_percentage = 0
+
+    for stock in stocks:
+        ticker = stock['ticker']
+        data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
+        stock['price'] = data['Close'].iloc[-1]
+        previous_close_price = data['Close'].iloc[-2]
+        stock['change'] = stock['price'] - previous_close_price
+        stock['change_percentage'] = stock['change'] / stock['price'] * 100
+        stock['market_value'] = stock['price'] * float(stock['shares'])
+        stock['gain'] = stock['market_value'] - stock['cost']
+        stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+
+        total_cost += stock['cost']
+        total_market_value += stock['market_value'] 
+        total_gain = total_market_value - total_cost
+        total_gain_percentage = total_gain / total_cost * 100
+
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+
 
 
 '''
-Yiming TO-DO:
-- error message for wrong stock ticker 
 - change button if already got stock in portfolio
-- make pretty
 '''
 @app.route("/search", methods=["POST"])
 def search():
@@ -100,44 +137,76 @@ def search():
 
     #get stock data from ticker input
     data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
-    print(data['Close'])
     close_price = data['Close'].iloc[-1]
+    previous_close_price = data['Close'].iloc[-2]
+    price_change = close_price - previous_close_price
+    price_change_percentage = (close_price - previous_close_price) / close_price * 100
+    if price_change > 0:
+        price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
+    else:
+        price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
+
     open_price = data['Open'].iloc[-1]
     low_price = data['Low'].iloc[-1]
     high_price = data['High'].iloc[-1]
     volume = data['Volume'].iloc[-1]
 
-    return render_template("search.html", ticker = ticker, close_price = close_price, open_price = open_price, low_price = low_price, high_price = high_price, name = name)
+    #create stock's closing price chart
+    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % ticker
+    session = requests.Session()
+    session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
+    raw_data = session.get(api_url)
+    a = raw_data.json()
+
+    df = pandas.DataFrame(a['data'], columns=a['column_names'])
+
+    df['Date'] = pandas.to_datetime(df['Date'])
+
+    p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='date', x_axis_type='datetime')
+    p.line(x=df['Date'].values, y=df['Close'].values,line_width=2)
+
+    script, div = components(p)
+   
+    return render_template("search.html", ticker = ticker, close_price = close_price, previous_close_price = previous_close_price, price_change_str = price_change_str, open_price = open_price, low_price = low_price, high_price = high_price, volume = volume, name = name, script = script, div = div)
+
 
 
 @app.route("/add_stock", methods=["POST"])
 def add_stock():
 
     users = mongo.db.users
-    #print(session)
-    #data = web.DataReader(request.form['search'], 'google', datetime.datetime.now(), datetime.datetime.now())
-    #close = data['Close'].iloc[-1]
-    
-    #gl = cur - request.form['price']
-    #investment = request.form['shares'] * request.form['price']
-    users.update_one(
-        { 'name' : session["user"] },
-        {'$push': {
-            'stocks': {
-                'ticker': request.form['ticker'],
-                'date': request.form['date'],
-                #'close' : close,
-                'shares': request.form['shares'],
-                'price': request.form['price'],
-                #'investment': investment,
-                #'gain/loss': gl,
-                'commission': request.form['commission']
+
+    existing_stock = users.find_one({'stocks.ticker' : request.form['ticker']})
+    if existing_stock is None:
+        users.update_one(
+            { 'name' : session["user"] },
+            {'$push': {
+                'stocks': {
+                    'name': request.form['name'],
+                    'ticker': request.form['ticker'],
+                    'price': 0.0, #placeholder
+                    'change': 0.0, #placeholder
+                    'change_percentage': 0.0, #placeholder
+                    'shares': int(request.form['shares']),
+                    'cost': float(request.form['cost']) * int(request.form['shares']),
+                    'market_value': 0.0, #placeholder
+                    'gain': 0.0, #placeholder
+                    'gain_percentage': 0.0, #placeholder
+                    }
                 }
             }
-        }
-    )
+        )
+    else:
+        users.update(
+            { 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
+            { '$set': {
+                'stocks.$.shares': int(request.form['shares']),
+                'stocks.$.cost': float(request.form['cost']) * int(request.form['shares']),
+                }
+            }
+        )
 
-    return redirect(url_for("home"))
+    return redirect(url_for("profile"))
 
 
 if __name__ == "__main__":
