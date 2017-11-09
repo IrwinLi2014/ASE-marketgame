@@ -95,15 +95,23 @@ def profile():
     total_gain_percentage = 0
 
     for stock in stocks:
+        print(type(stock['change']))
+        print(type(stock['market_value']))
+        print(type(stock['shares']))
+        print(type(stock['cost']))
+
         ticker = stock['ticker']
         data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
         stock['price'] = data['Close'].iloc[-1]
         previous_close_price = data['Close'].iloc[-2]
         stock['change'] = stock['price'] - previous_close_price
         stock['change_percentage'] = stock['change'] / stock['price'] * 100
-        stock['market_value'] = stock['price'] * float(stock['shares'])
+        stock['market_value'] = stock['price'] * stock['shares']
         stock['gain'] = stock['market_value'] - stock['cost']
-        stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+        if stock['shares'] == 0:
+            stock['gain_percentage'] = 0
+        else:
+            stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
 
         total_cost += stock['cost']
         total_market_value += stock['market_value'] 
@@ -175,6 +183,13 @@ def search():
 def add_stock():
 
     users = mongo.db.users
+    data = web.DataReader(request.form['ticker'], 'google', datetime.datetime.now(), datetime.datetime.now())
+    #check for empty user input
+
+    if len(request.form['shares']) == 0:
+        shares = 0
+    else:
+        shares = int(request.form['shares'])
 
     existing_stock = users.find_one({'stocks.ticker' : request.form['ticker']})
     if existing_stock is None:
@@ -187,8 +202,8 @@ def add_stock():
                     'price': 0.0, #placeholder
                     'change': 0.0, #placeholder
                     'change_percentage': 0.0, #placeholder
-                    'shares': int(request.form['shares']),
-                    'cost': float(request.form['cost']) * int(request.form['shares']),
+                    'shares': int(shares),
+                    'cost': data['Close'].iloc[-1] * int(shares),
                     'market_value': 0.0, #placeholder
                     'gain': 0.0, #placeholder
                     'gain_percentage': 0.0, #placeholder
@@ -200,8 +215,8 @@ def add_stock():
         users.update(
             { 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
             { '$set': {
-                'stocks.$.shares': int(request.form['shares']),
-                'stocks.$.cost': float(request.form['cost']) * int(request.form['shares']),
+                'stocks.$.shares': shares,
+                'stocks.$.cost': data['Close'].iloc[-1] * shares,
                 }
             }
         )
