@@ -72,7 +72,7 @@ def login():
             session['user'] = request.form['username']
             return redirect(url_for('home'))
 
-    return "ERROR: Invalid username or password"
+    return render_template("index.html", error=True)
 
 
 

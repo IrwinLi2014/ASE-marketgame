@@ -8,10 +8,14 @@
 		<link rel="stylesheet" href="../static/css/styles.css">
     	<title>Login Page</title>
 
-    	<!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    	<script type="text/javascript">
-    		$(document).ready(function() {
+    	<!-- jQuery -->
+    	 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
 
+    	<!-- <script type="text/javascript">
+    		$(document).ready(function() {
+    			if ($("div.alert.alert-danger").children().length == 0) {
+    				$("div.alert.alert-danger").hide()
+    			}
     		})
     	</script> -->
 	</head>
@@ -26,6 +30,9 @@
 				<input type="email" id="inputEmail" name="username" class="form-control" placeholder="email" required autofocus>
 				<label for="inputPassword" class="sr-only">Password</label>
         		<input type="password" id="inputPassword" name="password" class="form-control" placeholder="password" required>
+    			{% if error %}
+    				{% include 'login_error.html' %}
+    			{% endif %}
         		<div class="checkbox">
         			<label><input type="checkbox" value="remember-me"> Remember me</label>
         		</div>
