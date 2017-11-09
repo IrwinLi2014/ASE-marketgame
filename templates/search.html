@@ -41,9 +41,10 @@
       		</div>	
 		</nav>
 
+    <!--
       <main role="main" class="container">
           <div class="jumbotron">
-            <h1>My Stocks</h1>
+            <h1>{{name}}</h1>
             <table class="table">
               <thead>
                 <th scope="col">Symbol</th>
@@ -54,21 +55,22 @@
                 <tr>
                   <td>{{ticker}}</td>
                   <td>{{name}}</td>
-                  <td>{{cur}}</td>
+                  <td>{{close}}</td>
                 </tr>
               </tbody>
             </table>
-              <!--{% for ticker in tickers %}
-              <p>{{ticker}}</p>
-              {% endfor %}-->
-            
           </div>
       </main>
-		
-	<div class='container'>
-	
-		<h1>{{ ticker }}</h1>
+    -->
 
+	<div class='container jumbotron'>
+
+    <!--Display-->
+	
+		<h1>{{ name }}</h1>
+
+
+    <!--Form-->
 		<form method=POST action="{{ url_for('add_stock') }}">
 
 		<input type='hidden' name='ticker' value='{{ ticker }}'>
@@ -87,7 +89,7 @@
 
     		<br><br>
 
-        	<button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Add Stock to Portfolio</button>
 
 		</form>
 
