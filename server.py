@@ -1,5 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
+from flask_sqlalchemy import SQLAlchemy
+
 
 from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
@@ -12,6 +14,7 @@ import pandas_datareader.data as web
 import requests
 import simplejson as json
 import sys
+from pymongo import MongoClient
 
 
 app = Flask(__name__)
@@ -21,7 +24,7 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/winydb'
 
 mongo = PyMongo(app)
 
-
+db = MongoClient(mongodb_uri)
 
 @app.route("/")
 @app.route("/index")
@@ -68,7 +71,7 @@ def login():
     print(login_user)
 
     if login_user:
-        if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
+        if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
             session['user'] = request.form['username']
             return redirect(url_for('home'))
 
@@ -177,6 +180,7 @@ def add_stock():
     users = mongo.db.users
 
     existing_stock = users.find_one({'stocks.ticker' : request.form['ticker']})
+    print("here")
     if existing_stock is None:
         users.update_one(
             { 'name' : session["user"] },
@@ -196,6 +200,8 @@ def add_stock():
                 }
             }
         )
+        print("updated1")
+
     else:
         users.update(
             { 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
@@ -205,6 +211,9 @@ def add_stock():
                 }
             }
         )
+        print(existing_stock['cost'])
+
+        print("updated2")
 
     return redirect(url_for("profile"))
 
