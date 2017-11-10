@@ -16,13 +16,6 @@ class MarketGameTests(unittest.TestCase):
 		app.config['TESTING'] = True
 		app.config['MONGODB_DATABASE'] = 'new_test'
 		self.app = app.test_client()
-		
-		# test1.drop()
-		# mongo.collection.drop()
-		# mongo.createCollection()
-		#app.config['MONGO_DBNAME'] = "test"
-		#app.config['MONGO_URI'] = 'mongodb://localhost:27017/test'
-		#db.dropDatabase()
 
 	def tearDown(self):
 		with app.app_context():
@@ -42,14 +35,21 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response.status_code, 200)
 
 	def login(self, username, password):
-		return self.app.post('/login', data=dict(username=username, password=password), follow_redirects=True)
+		return self.app.post('/login', data=dict(username=username, password=password))
 
 	def test_login(self):
+		self.register('abc@gmail.com', 'hello', 'hello')
 		response = self.login('abc@gmail.com', 'hello')
+		self.assertEqual(response.status_code, 302)
+
+	def test_login_fail(self):
+		self.register('abc@gmail.com', 'hello', 'hello')
+		response = self.login('abc@gmail.com', 'nopenope')
+		self.assertEqual("<strong>ERROR:</strong> Invalid username or password" in response.data.decode("utf-8"), True)
 		self.assertEqual(response.status_code, 200)
 
 	def add_stock(self, name, ticker, shares, cost):
-		return self.app.post('/add_stock', data=dict(name = name, ticker=ticker, shares=shares, cost=cost), follow_redirects=True)
+		return self.app.post('/add_stock', data=dict(name = name, ticker=ticker, shares=shares, cost=cost))
 
 	def test_add_stock(self):
 		
@@ -57,8 +57,8 @@ class MarketGameTests(unittest.TestCase):
 		self.login("abc@gmail.com", "hello")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
 		response_2 = self.add_stock('Google', 'GOOG', "5", "5")
-		self.assertEqual(response_1.status_code,200)
-		self.assertEqual(response_2.status_code,200)
+		self.assertEqual(response_1.status_code,302)
+		self.assertEqual(response_2.status_code,302)
 		with app.app_context():
 			user = mongo.db.users.find_one({'name' : "abc@gmail.com"})
 		stocks = user["stocks"]
