@@ -84,7 +84,16 @@ class MarketGameTests(unittest.TestCase):
 		if not found:
 			assert False
 		
+	def test_profile(self):
+		self.register('abc@gmail.com', 'hello', 'hello')
+		self.login("abc@gmail.com", "hello")
+		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
+		self.assertEqual(response_1.status_code,302)
 
+		response_2 = self.app.get("/profile")
+		self.assertEqual(response_2.status_code,200)
+		print(response_2.data)
+		self.assertEqual("<td>Google</td>" in response_2.data.decode("utf-8"), True)
 
 	@patch('pandas_datareader.data.DataReader')
 	@patch('requests.get')
