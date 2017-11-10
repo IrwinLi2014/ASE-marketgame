@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 
 {% block title %}Search{% endblock %}
-
+{% block nav %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Games</a>
+                </li>
+{% endblock %}
 {% block body %}
   <h1>{{ name }} ({{ ticker }})</h1>
   <h2>${{ close_price }}</h2> 
@@ -13,11 +23,35 @@
     <div class='container'>
 
     <div style = "width: 35%; float: left">
+
+        <!--Summary display-->
         <h4>Summary</h4>
         <h6>Previous Close: ${{ previous_close_price }}</h6>
         <h6>Open: ${{ open_price }}</h6>
         <h6>Day's Range: ${{ low_price }} - ${{ high_price }}</h6>
         <h6>Volume: {{ volume }}</h6>
+        <br>
+        <hr width=100% align=left>
+        <br>
+
+        <!--Form-->
+        <div style = "width: 100%; clear: both">
+            <h4>Add Stock to Portfolio</h4>
+            <form method=POST action="{{ url_for('add_stock') }}">
+                <input type='hidden' name='name' value='{{ name }}'>
+                <input type='hidden' name='ticker' value='{{ ticker }}'>
+            
+                <label for='shares'>Shares</label>
+                <input type='number' min="0" step="1" name='shares' placeholder='number of shares'>
+                <!--
+                <label for='cost'>Cost Per Share</label>
+                <input type='number' name='cost' placeholder='price paid per share'>
+                -->
+                <button type='submit' class='btn btn-primary'>Submit</button>
+
+            </form>
+        </div>
+
     </div>
 
     <div style = "width: 55%; float: right">
@@ -26,31 +60,6 @@
         {{ div | safe }}
     </div>
   
-    
-    <!--Form-->
-    <div style = "width: 100%; clear: both">
-
-        <br><br>
-
-        <hr width=100% align=left>
-
-        <h4>Add Stock to Portfolio</h4>
-
-        <form method=POST action="{{ url_for('add_stock') }}">
-            <input type='hidden' name='name' value='{{ name }}'>
-            <input type='hidden' name='ticker' value='{{ ticker }}'>
-        
-            <label for='shares'>Shares</label>
-            <input type='number' name='shares' placeholder='number of shares'>
-
-            <label for='cost'>Cost Per Share</label>
-            <input type='number' name='cost' placeholder='price paid per share'>
-
-            <button type='submit' class='btn btn-primary'>Submit</button>
-
-        </form>
-    </div>
-
     </div>
 
 

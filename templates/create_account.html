@@ -18,16 +18,23 @@
 					<label for="newEmail">Email Address</label>
     				<input type="email" class="form-control" id="newEmail" name="username" placeholder="email">
 				</div>
+				{% if username_error %}
+					{% include 'partials/username_error.html' %}
+				{% endif %}
 				
 				<div class="form-group">
 					<label for="newPassword">Password</label>
     				<input type="password" class="form-control" id="newPassword" name="password" placeholder="password">
 				</div>
-				
+
 				<div class="form-group">
 					<label for="confirmPassword">Confirm Password</label>
     				<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="password">
 				</div>
+				{% if password_error %}
+					{% include 'partials/password_error.html' %}
+				{% endif %}
+
         		<button class="btn btn-lg btn-primary btn-block" type="submit" style="max-width:200px">Sign Up</button>
 			</form>
 			
