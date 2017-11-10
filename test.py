@@ -65,11 +65,11 @@ class MarketGameTests(unittest.TestCase):
 
 		found = False
 		for stock in stocks:
-			if stock['name'] == 'GOOG':
+			if stock['name'] == 'Google':
 				found = True
+				print("found")
 				self.assertEqual(stock['shares'], 10)
-		if not found:
-			assert False
+		
 
 
 	@patch('pandas_datareader.data.DataReader')

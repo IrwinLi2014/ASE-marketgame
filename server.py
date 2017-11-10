@@ -207,14 +207,23 @@ def add_stock():
         )
 
     else:
+        cur_stock = existing_stock['stocks']
+        print(cur_stock)
+        existing_shares = cur_stock[0]['shares']
+
         users.update(
             { 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
             { '$set': {
-                'stocks.$.shares': shares,
+                'stocks.$.shares': existing_shares + shares,
                 'stocks.$.cost': data['Close'].iloc[-1] * shares,
                 }
             }
         )
+
+        cur_stock = existing_stock['stocks']
+        print(cur_stock)
+        
+
 
     return redirect(url_for("profile"))
 
