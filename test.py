@@ -34,6 +34,17 @@ class MarketGameTests(unittest.TestCase):
 		response = self.register('abc@gmail.com', 'hello', 'hello')
 		self.assertEqual(response.status_code, 200)
 
+	def test_register_password_fail(self):
+		response = self.register('abc@gmail.com', 'hello', 'nopenope')
+		self.assertEqual("<strong>ERROR:</strong> Passwords do not match" in response.data.decode("utf-8"), True)
+		self.assertEqual(response.status_code, 200)
+
+	def test_register_username_fail(self):
+		self.register('abc@gmail.com', 'hello', 'hello')
+		response = self.register('abc@gmail.com', 'hello', 'hello')
+		self.assertEqual("<strong>ERROR:</strong> Username already exists" in response.data.decode("utf-8"), True)
+		self.assertEqual(response.status_code, 200)
+
 	def login(self, username, password):
 		return self.app.post('/login', data=dict(username=username, password=password))
 
