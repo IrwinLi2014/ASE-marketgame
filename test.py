@@ -24,7 +24,8 @@ class MarketGameTests(unittest.TestCase):
 		#db.dropDatabase()
 
 	def tearDown(self):
-		pass
+		with app.app_context():
+			mongo.db.users.remove({})
 ###############
 #### tests ####
 ###############
@@ -51,9 +52,9 @@ class MarketGameTests(unittest.TestCase):
 
 	def test_add_stock(self):
 		
-
+		self.register('abc@gmail.com', 'hello', 'hello')
 		self.login("abc@gmail.com", "hello")
-		# rv = self.app.get('/?user=abc@gmail.com')
+		#rv = self.app.get('/?user=abc@gmail.com')
 		#users = test.db.users
 		#login_user = users.find_one({'name' : session['user']})
 		#stocks = login_user['stocks']
@@ -80,6 +81,7 @@ class MarketGameTests(unittest.TestCase):
 		return self.app.post('/logout')
 
 	def test_logout(self):
+		self.register('abc@gmail.com', 'hello', 'hello')
 		self.login("abc@gmail.com", "hello")
 		response = self.logout()
 		self.assertEqual(response.status_code, 302)

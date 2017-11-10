@@ -24,7 +24,6 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/winydb'
 
 mongo = PyMongo(app)
 
-db = MongoClient(mongodb_uri)
 
 @app.route("/")
 @app.route("/index")
@@ -71,7 +70,7 @@ def login():
     print(login_user)
 
     if login_user:
-        if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
+        if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
             session['user'] = request.form['username']
             return redirect(url_for('home'))
 
