@@ -1,7 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
-from flask_sqlalchemy import SQLAlchemy
-
 
 from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
@@ -67,7 +65,6 @@ def register():
 def login():
     users = mongo.db.users
     login_user = users.find_one({'name' : request.form['username']})
-    print(login_user)
 
     if login_user:
         if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
@@ -97,11 +94,6 @@ def profile():
     total_gain_percentage = 0
 
     for stock in stocks:
-        print(type(stock['change']))
-        print(type(stock['market_value']))
-        print(type(stock['shares']))
-        print(type(stock['cost']))
-
         ticker = stock['ticker']
         data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
         stock['price'] = data['Close'].iloc[-1]
@@ -194,7 +186,6 @@ def add_stock():
         shares = int(request.form['shares'])
 
     existing_stock = users.find_one({'stocks.ticker' : request.form['ticker']})
-    print("here")
     if existing_stock is None:
         users.update_one(
             { 'name' : session["user"] },
@@ -214,7 +205,6 @@ def add_stock():
                 }
             }
         )
-        print("updated1")
 
     else:
         users.update(
@@ -225,9 +215,6 @@ def add_stock():
                 }
             }
         )
-        print(existing_stock['cost'])
-
-        print("updated2")
 
     return redirect(url_for("profile"))
 

@@ -4,7 +4,8 @@ import pandas
 import unittest
 from unittest.mock import patch
 import flask_pymongo
-import flask
+# import flask
+# from flask import session
 
 TEST_DB = 'new_test.db'
 
@@ -54,17 +55,22 @@ class MarketGameTests(unittest.TestCase):
 		
 		self.register('abc@gmail.com', 'hello', 'hello')
 		self.login("abc@gmail.com", "hello")
-		#rv = self.app.get('/?user=abc@gmail.com')
-		#users = test.db.users
-		#login_user = users.find_one({'name' : session['user']})
-		#stocks = login_user['stocks']
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
+		response_2 = self.add_stock('Google', 'GOOG', "5", "5")
 		self.assertEqual(response_1.status_code,200)
-		# response_2 = self.add_stock('GOOG', '1/1/2017', "5", "5", "50")
+		self.assertEqual(response_2.status_code,200)
+		with app.app_context():
+			user = mongo.db.users.find_one({'name' : "abc@gmail.com"})
+		stocks = user["stocks"]
 
-		#for stock in stocks:
-		#	if stock['name'] == 'GOOG':
-		#		self.assertEqual(stock['shares'], 10)
+		found = False
+		for stock in stocks:
+			if stock['name'] == 'GOOG':
+				found = True
+				self.assertEqual(stock['shares'], 10)
+		if not found:
+			assert False
+
 
 	@patch('pandas_datareader.data.DataReader')
 	@patch('requests.get')
