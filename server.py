@@ -224,6 +224,7 @@ def add_stock():
             }
         )
 
+
     return redirect(url_for("profile"))
 
 
