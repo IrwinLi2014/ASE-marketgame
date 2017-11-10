@@ -185,7 +185,12 @@ def add_stock():
     else:
         shares = int(request.form['shares'])
 
-    existing_stock = users.find_one({'stocks.ticker' : request.form['ticker']})
+    stocks = users.find_one({'name' : session["user"]})["stocks"]
+    existing_stock = None
+    for stock in stocks:
+        if stock["ticker"] == request.form['ticker']:
+            existing_stock = stock
+
     if existing_stock is None:
         users.update_one(
             { 'name' : session["user"] },
@@ -207,11 +212,14 @@ def add_stock():
         )
 
     else:
+        print(existing_stock)
+        new_shares = existing_stock["shares"] + shares
+        new_cost = data['Close'].iloc[-1] * shares + existing_stock["cost"]
         users.update(
             { 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
             { '$set': {
-                'stocks.$.shares': shares,
-                'stocks.$.cost': data['Close'].iloc[-1] * shares,
+                'stocks.$.shares': new_shares,
+                'stocks.$.cost': new_cost,
                 }
             }
         )

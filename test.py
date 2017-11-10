@@ -65,8 +65,9 @@ class MarketGameTests(unittest.TestCase):
 
 		found = False
 		for stock in stocks:
-			if stock['name'] == 'GOOG':
+			if stock['ticker'] == 'GOOG':
 				found = True
+				print("hello???")
 				self.assertEqual(stock['shares'], 10)
 		if not found:
 			assert False
