@@ -67,7 +67,7 @@ def register():
        has_special(request.form['password']) +
        has_capital(request.form['password']) +
        has_lower(request.form['password'])) < 3:
-       return render_template("create_account.html")
+       return render_template("create_account.html", password_error=True)
 
     if existing_user is None:
         if request.form['password'] == request.form['confirmPassword']:
@@ -76,9 +76,9 @@ def register():
             session['user'] = request.form['username']
             return redirect(url_for("home"))
         else:
-            return render_template("create_account.html", password_error=True, username_error=False)
+            return render_template("create_account.html", confirm_error=True, username_error=False)
 
-    return render_template("create_account.html", password_error=False, username_error=True)
+    return render_template("create_account.html", confirm_error=False, username_error=True)
 
 
 
