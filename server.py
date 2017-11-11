@@ -12,6 +12,7 @@ import pandas_datareader.data as web
 import requests
 import simplejson as json
 import sys
+import re
 from pymongo import MongoClient
 
 
@@ -43,11 +44,31 @@ def home():
     return redirect(url_for("index"))
 
 
+# helper functions for register password check
+def has_nums(s):
+    return bool(re.search(r'[0-9]', s))
+
+def has_special(s):
+    return bool(re.search(r'\W+$', s))
+
+def has_capital(s):
+    return bool(re.search(r'[A-Z]', s))
+
+def has_lower(s):
+    return bool(re.search(r'[a-z]', s))
 
 @app.route("/register", methods=["POST"])
 def register():
     users = mongo.db.users
     existing_user = users.find_one({'name' : request.form['username']})
+    # check if the password has at least 3 of [A-Z], [a-z], [0-9], special chars
+    print(has_nums(request.form['password']))
+    if (has_nums(request.form['password']) + 
+       has_special(request.form['password']) +
+       has_capital(request.form['password']) +
+       has_lower(request.form['password'])) < 3:
+       return render_template("create_account.html")
+
     if existing_user is None:
         if request.form['password'] == request.form['confirmPassword']:
             hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())

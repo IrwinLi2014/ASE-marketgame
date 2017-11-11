@@ -1,0 +1,4 @@
+#!/bin/sh
+rm -rf __pycache__/
+rm .DS_Store
+rm -rf .cache/
