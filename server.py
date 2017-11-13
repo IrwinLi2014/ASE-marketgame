@@ -174,23 +174,41 @@ def search():
     high_price = data['High'].iloc[-1]
     volume = data['Volume'].iloc[-1]
 
-    #create stock's closing price chart
-    api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % ticker
-    session = requests.Session()
-    session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-    raw_data = session.get(api_url)
-    a = raw_data.json()
-
-    df = pandas.DataFrame(a['data'], columns=a['column_names'])
-
-    df['Date'] = pandas.to_datetime(df['Date'])
-
-    p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='date', x_axis_type='datetime')
-    p.line(x=df['Date'].values, y=df['Close'].values,line_width=2)
-
-    script, div = components(p)
    
-    return render_template("search.html", ticker = ticker, close_price = close_price, previous_close_price = previous_close_price, price_change_str = price_change_str, open_price = open_price, low_price = low_price, high_price = high_price, volume = volume, name = name, script = script, div = div)
+    #create stock's closing price chart
+    try:
+        #Quandl
+        api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % ticker
+        session = requests.Session()
+        session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
+        raw_data = session.get(api_url)
+        a = raw_data.json()
+
+        df = pandas.DataFrame(a['data'], columns=a['column_names'])
+        df['Date'] = pandas.to_datetime(df['Date'])
+
+        """
+        #Alphavantage
+        
+        api_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=8HEWLV32V6QMXG1L"
+        session = requests.Session()
+        session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
+        raw_data = session.get(api_url)
+        a = raw_data.json()
+
+        df = pandas.DataFrame(a['data'], columns=a['column_names'])
+
+        """
+
+        p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='date', x_axis_type='datetime')
+        p.line(x=df['Date'].values, y=df['Close'].values,line_width=2)
+
+        script, div = components(p)
+       
+        return render_template("search.html", ticker = ticker, close_price = close_price, previous_close_price = previous_close_price, price_change_str = price_change_str, open_price = open_price, low_price = low_price, high_price = high_price, volume = volume, name = name, script = script, div = div)
+    
+    except:
+        return "ERROR: ticker not supported"
 
 
 
