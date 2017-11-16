@@ -26,9 +26,9 @@
 
         <!--Summary display-->
         <h4>Summary</h4>
-        <h6>Previous Close: ${{ previous_close_price }}</h6>
-        <h6>Open: ${{ open_price }}</h6>
-        <h6>Day's Range: ${{ low_price }} - ${{ high_price }}</h6>
+        <h6>Previous Close: ${{ '{0:.2f}'.format(previous_close_price) }}</h6>
+        <h6>Open: ${{ '{0:.2f}'.format(open_price) }}</h6>
+        <h6>Day's Range: ${{ '{0:.2f}'.format(low_price) }} - ${{ '{0:.2f}'.format(high_price) }}</h6>
         <h6>Volume: {{ volume }}</h6>
         <br>
         <hr width=100% align=left>
@@ -42,11 +42,8 @@
                 <input type='hidden' name='ticker' value='{{ ticker }}'>
             
                 <label for='shares'>Shares</label>
-                <input type='number' min="0" step="1" name='shares' placeholder='number of shares'>
-                <!--
-                <label for='cost'>Cost Per Share</label>
-                <input type='number' name='cost' placeholder='price paid per share'>
-                -->
+                <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>
+                
                 <button type='submit' class='btn btn-primary'>Submit</button>
 
             </form>
