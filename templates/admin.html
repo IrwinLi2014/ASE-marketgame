@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin{% endblock %}
+{% block nav %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="{{ url_for('profile') }}">Profile <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Games</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
+                </li>
+                 <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('register_game') }}">Register for game</a>
+                </li>
+{% endblock %}
+
+{% block body %}
+	<h1>Admin Page</h1>
+{% endblock %}
+
+{% block content %}
+    <div class='container'>
+
+    <div style = "width: 35%; float: left">
+
+        <!--Form-->
+        <div style = "width: 100%; clear: both">
+            <h4>Create a new game</h4>
+            <form method=POST action="{{ url_for('add_game') }}">
+               
+                <label for='regstart'>Registration Dates: </label>
+                <input type='date' name='regdate1' placeholder='registration start date'>
+                <input type='date' name='regdate2' placeholder='registration end date'>
+                <label for='gamestart'>Game Dates: </label>
+                <input type='date' name='date1' placeholder='start date'>
+                <input type='date' name='date2' placeholder='end date'>
+                
+                <button type='submit' class='btn btn-primary'>Submit</button>
+
+            </form>
+        </div>
+
+         <div style = "width: 100%; clear: both">
+            <h4>Add Admin User</h4>
+            <form method=POST action="{{ url_for('add_admin') }}">
+                <input type='text' name='admin_user' placeholder='Add new admin'>
+                <button type='submit' class='btn btn-primary'>Submit</button>
+
+            </form>
+        </div>
+
+    </div>
+
+    <div style = "width: 55%; float: right">
+        {{ script | safe }}
+        {{ header | safe }}
+        {{ div | safe }}
+    </div>
+  
+    </div>
+
+
+{% endblock %}
