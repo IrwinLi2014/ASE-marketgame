@@ -9,13 +9,7 @@
                   <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Games</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('register_game') }}">Register for game</a>
+                  <a class="nav-link" href="{{ url_for('games') }}">Games</a>
                 </li>
 {% endblock %}
 
@@ -38,7 +32,7 @@
           	</select>
           	<input class="button1" type="submit" value="Select">
           	{% endfor %}
-		</form>
+		    </form>
         <br>
         <hr width=100% align=left>
         <br>
