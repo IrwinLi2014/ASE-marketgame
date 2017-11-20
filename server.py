@@ -103,15 +103,6 @@ def logout():
 	del session['user']
 	return redirect(url_for("index"))
 
-@app.route("/admin")  
-def admin():
-    users = mongo.db.users
-    login_user = users.find_one({'name' : session['user']})
-    admin = login_user.get("admin")
-    if admin == True:
-        return render_template("admin.html", error=True)
-    else:
-        return "ERROR: You don't have access to this page"
 
 
 @app.route("/profile", methods=["GET"])
@@ -295,6 +286,48 @@ def add_stock():
 
 	return redirect(url_for("profile"))
 
+@app.route("/games")
+def games():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    admin = login_user.get("admin")
+    if admin == True:
+        return render_template("admin.html", error=True)
+    games = mongo.db.games
+    cursor = games.find({})
+
+    results = [res for res in cursor]
+    cur_date = datetime.datetime.now()
+    invited_groups = []
+   
+    for res in results:
+
+        reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
+        reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
+
+        if cur_date > reg_start and cur_date < reg_end:
+            # you want to start rendering the template
+            # you want to retrieve the list of groups the user was invited to
+            id = res["id"]
+            group_list = res["groups"]
+            for group_name in group_list:
+                groups = mongo.db.groups
+                cur_group = groups.find_one({'name' : group_name})
+                if cur_group is not None:
+                    invitees = cur_group['invitees']
+                    if login_user in invitees:
+                        invited_groups.append(group_name)
+
+            # retrieve a list of all users to invite
+            all_users = []
+            cursor_2 = users.find({})
+            results_2 = [res for res in cursor_2]
+            for res in results_2:
+                all_users.append(res['name'])
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+    return "ERROR: Currently not a registration period"
+
+
 def id_of_game(game):
     id = 0
     cursor = game.find({})
@@ -306,6 +339,7 @@ def id_of_game(game):
 
 def check_date_overlap(date1, date2, date3, date4):
     return max(date1, date3) < min(date2, date4)
+
 
 @app.route("/add_game", methods=["POST"])
 def add_game():
@@ -334,49 +368,6 @@ def add_admin():
         {'name': request.form['admin_user'], 'admin': True}
     )
     return render_template("admin.html", error=True)
-
-@app.route("/register_game", methods=["POST", "GET"])
-def register_game():
-
-    users = mongo.db.users
-    login_user = users.find_one({'name' : session['user']})
-    # check which registration is ongoing right now
-
-   
-    games = mongo.db.games
-    cursor = games.find({})
-
-    results = [res for res in cursor]
-    cur_date = datetime.datetime.now()
-    invited_groups = []
-    print("*************************")
-    print(type(cur_date))
-    for res in results:
-
-        reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
-        reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
-
-        if cur_date > reg_start and cur_date < reg_end:
-            # you want to start rendering the template
-            # you want to retrieve the list of groups the user was invited to
-            id = res["id"]
-            group_list = res["groups"]
-            for group_name in group_list:
-                groups = mongo.db.groups
-                cur_group = groups.find_one({'name' : group_name})
-                if cur_group is not None:
-                    invitees = cur_group['invitees']
-                    if login_user in invitees:
-                        invited_groups.append(group_name)
-
-            # retrieve a list of all users to invite
-            all_users = []
-            cursor_2 = users.find({})
-            results_2 = [res for res in cursor_2]
-            for res in results_2:
-                all_users.append(res['name'])
-            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
-    return "ERROR: Currently not a registration period"
 
 
 @app.route("/join_group", methods=["POST", "GET"])

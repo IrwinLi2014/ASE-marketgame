@@ -9,13 +9,7 @@
                   <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Games</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('register_game') }}">Register for game</a>
+                  <a class="nav-link" href="{{ url_for('games') }}">Games</a>
                 </li>
 {% endblock %}
 
@@ -45,12 +39,11 @@
           		<option value="{{ o }}">{{ o }}</option>
               {% endfor %}
           	 </select>
-            
           	 <button class="btn btn-sm join-group-btn" type="submit">Select</button>	
 		      </div>
         </form>
 
-
+          
         <br>
         <hr width=100% align=left>
         <br>
@@ -63,11 +56,10 @@
             
               <label>Find Members</label>
   				    <input type="text" id="txtName" readonly="readonly"> 
-              <label>Users</label>
   				    <select class="users" width="300px" multiple>
-					     {% for o in all_users %}
-    					 <option value="{{ o }}">{{ o }}</option>
-               {% endfor %}
+					      {% for o in all_users %}
+    					     <option value="{{ o }}">{{ o }}</option>
+                {% endfor %}
 				      </select>
 				      <input type="button" onclick="SetName();" value="Add"/>
               <script>
@@ -83,7 +75,7 @@
               <br><br>
               <button type='submit' class='btn btn-primary'>Submit</button>
             </div>
-        </form>
+          </form>
 
 
     </div>
