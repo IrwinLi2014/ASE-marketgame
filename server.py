@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
+from flask_pymongo import MongoClient
 
 from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
@@ -28,6 +29,7 @@ mongo = PyMongo(app)
 @app.route("/index")
 def index():
 	return render_template("index.html")
+
 
 
 
@@ -72,7 +74,7 @@ def register():
 	if existing_user is None:
 		if request.form['password'] == request.form['confirmPassword']:
 			hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': []})
+			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': [], 'admin': False})
 			session['user'] = request.form['username']
 			return redirect(url_for("home"))
 		else:
@@ -100,7 +102,16 @@ def login():
 def logout():
 	del session['user']
 	return redirect(url_for("index"))
-	   
+
+@app.route("/admin")  
+def admin():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    admin = login_user.get("admin")
+    if admin == True:
+        return render_template("admin.html", error=True)
+    else:
+        return "ERROR: You don't have access to this page"
 
 
 @app.route("/profile", methods=["GET"])
@@ -283,6 +294,98 @@ def add_stock():
 			)
 
 	return redirect(url_for("profile"))
+
+def id_of_game(game):
+    id = 0
+    cursor = game.find({})
+
+    results = [res for res in cursor]
+    for res in results:
+        id+=1
+    return id
+
+def check_date_overlap(date1, date2, date3, date4):
+    return max(date1, date3) < min(date2, date4)
+
+@app.route("/add_game", methods=["POST"])
+def add_game():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    games = mongo.db.games
+    new_id = id_of_game(games) + 1
+
+    cursor = games.find({})
+    results = [res for res in cursor]
+    for res in results:
+        overlap = check_date_overlap(request.form['date1'], request.form['date2'], res['start_date'], res['end_date'])
+        if overlap == True:
+            return "ERROR: overlap in other game dates"
+
+    games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user})
+    return render_template("admin.html", error=True)
+
+@app.route("/add_admin", methods=["POST"])
+def add_admin():
+    users = mongo.db.users
+    added_admin = users.find_one({'name' : request.form['admin_user']})
+    if added_admin is None:
+        return "ERROR: User does not exist"
+    users.update(
+        {'name': request.form['admin_user'], 'admin': True}
+    )
+    return render_template("admin.html", error=True)
+
+@app.route("/register_game", methods=["POST", "GET"])
+def register_game():
+
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    # check which registration is ongoing right now
+
+   
+    games = mongo.db.games
+    cursor = games.find({})
+
+    results = [res for res in cursor]
+    cur_date = datetime.datetime.now()
+    invited_groups = []
+    print("*************************")
+    print(type(cur_date))
+    for res in results:
+
+        reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
+        reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
+
+        if cur_date > reg_start and cur_date < reg_end:
+            # you want to start rendering the template
+            # you want to retrieve the list of groups the user was invited to
+            id = res["id"]
+            group_list = res["groups"]
+            for group_name in group_list:
+                groups = mongo.db.groups
+                cur_group = groups.find_one({'name' : group_name})
+                if cur_group is not None:
+                    invitees = cur_group['invitees']
+                    if login_user in invitees:
+                        invited_groups.append(group_name)
+
+            # retrieve a list of all users to invite
+            all_users = []
+            cursor_2 = users.find({})
+            results_2 = [res for res in cursor_2]
+            for res in results_2:
+                all_users.append(res['name'])
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+    return "ERROR: Currently not a registration period"
+
+
+@app.route("/join_group", methods=["POST", "GET"])
+def join_group():
+    return "DO NOTHING"
+
+@app.route("/create_group", methods=["POST", "GET"])
+def create_group():
+    return "DO NOTHING"
 
 
 if __name__ == "__main__":
