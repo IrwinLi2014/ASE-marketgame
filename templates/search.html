@@ -14,7 +14,7 @@
 {% endblock %}
 {% block body %}
   <h1>{{ name }} ({{ ticker }})</h1>
-  <h2>${{ close_price }}</h2> 
+  <h2>${{ '{0:.2f}'.format(close_price) }}</h2> 
   <h4 style="color:#838382">{{ price_change_str }}</h4>
   <h6 style="color:#838382">At most recent close</h6>
 {% endblock %}

@@ -5,15 +5,17 @@ from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
 from bokeh.embed import components 
 
+from datetime import datetime
+from pymongo import MongoClient
+
 import bcrypt
-import datetime
+import json
 import pandas
 import pandas_datareader.data as web
+import re
 import requests
 import simplejson as json
 import sys
-import re
-from pymongo import MongoClient
 
 
 app = Flask(__name__)
@@ -147,8 +149,8 @@ def search():
 	ticker = request.form['search'].upper()
 
 	#verify that stock ticker exists
-	url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
-	result = requests.get(url).json()
+	yahoo_url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
+	result = requests.get(yahoo_url).json()
 
 	name_found = False
 	for x in result['ResultSet']['Result']:
@@ -159,9 +161,24 @@ def search():
 		return "ERROR: invalid ticker"
 
 	#get stock data from ticker input
+	av_intraday_url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + ticker + "&interval=1min&apikey=8HEWLV32V6QMXG1L"
+	result = requests.get(av_intraday_url).json()
+	last_refreshed = result["Meta Data"]["3. Last Refreshed"]
+	close_price = float(result["Time Series (1min)"][last_refreshed]["4. close"])
+
+	av_daily_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&apikey=8HEWLV32V6QMXG1L"
+	result = requests.get(av_daily_url).json()
+	daily_time_series = result["Time Series (Daily)"]
+	ordered_daily_time_series = sorted(daily_time_series.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	previous_day = ordered_daily_time_series[1]
+	previous_close_price = float(previous_day[1][ "4. close"])
+
+	'''
+	#get stock data from ticker input
 	data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
 	close_price = data['Close'].iloc[-1]
 	previous_close_price = data['Close'].iloc[-2]
+	'''
 	price_change = close_price - previous_close_price
 	price_change_percentage = (close_price - previous_close_price) / close_price * 100
 	if price_change > 0:
@@ -169,12 +186,21 @@ def search():
 	else:
 		price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
 
+	
+	most_recent_day = ordered_daily_time_series[0]
+	open_price = float(most_recent_day[1]["1. open"])
+	low_price = float(most_recent_day[1]["3. low"])
+	high_price = float(most_recent_day[1]["2. high"])
+
+	'''
 	open_price = data['Open'].iloc[-1]
 	low_price = data['Low'].iloc[-1]
 	high_price = data['High'].iloc[-1]
 	volume = data['Volume'].iloc[-1]
-	volume_str = "{:.2f}".format(volume / 10**6) + "M"
+	'''
 
+	volume = float(most_recent_day[1]["5. volume"])
+	volume_str = "{:.2f}".format(volume / 10**6) + "M"
 
 	#get current share holdings of stock
 	users = mongo.db.users
