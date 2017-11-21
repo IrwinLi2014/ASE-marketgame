@@ -24,6 +24,7 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/winydb'
 
 mongo = PyMongo(app)
 
+global_id = 0
 
 @app.route("/")
 @app.route("/index")
@@ -110,8 +111,21 @@ def profile():
     users = mongo.db.users
     login_user = users.find_one({'name' : session['user']})
     admin = login_user.get("admin")
+    past_games = []
+    cur_games = []
+    future_games = []
     if admin == True:
-        return render_template("admin.html", error=True)
+        games = mongo.db.games
+        cursor = games.find({})
+        results = [res for res in cursor]
+        for res in results:
+            if datetime.datetime.strptime(res["end_date"], '%Y-%m-%d') < datetime.datetime.now():
+                past_games.append(res)
+            else if datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
+                future_games.append(res)
+            else:
+                cur_games.append(res)
+            return render_template("admin.html", past_games = past_games, cur_games = cur_games, future_games = future_games)
     stocks = login_user['stocks']
     total_cost = 0
     total_market_value = 0
@@ -292,6 +306,7 @@ def games():
     login_user = users.find_one({'name' : session['user']})
     games = mongo.db.games
     cursor = games.find({})
+    groups = mongo.db.groups
 
     results = [res for res in cursor]
     cur_date = datetime.datetime.now()
@@ -299,13 +314,24 @@ def games():
    
     for res in results:
 
+        game_start = datetime.datetime.strptime(res.get("start_date"), '%Y-%m-%d')
+        game_end = datetime.datetime.strptime(res.get("end_date"), '%Y-%m-%d')
         reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
         reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
+
+        if cur_date > game_start and cur_date < game_end:
+            game_groups = res["groups"]
+            for group in game_groups:
+                users_list = groups.find_one({'name': group})
+                if login_user in users_list:
+                    return render_template("game.html", error=True)
 
         if cur_date > reg_start and cur_date < reg_end:
             # you want to start rendering the template
             # you want to retrieve the list of groups the user was invited to
             id = res["id"]
+            global global_id
+            global_id = id
             group_list = res["groups"]
             for group_name in group_list:
                 groups = mongo.db.groups
@@ -320,9 +346,11 @@ def games():
             cursor_2 = users.find({})
             results_2 = [res for res in cursor_2]
             for res in results_2:
+                if res['name'] == login_user['name']:
+                    continue
                 all_users.append(res['name'])
             return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
-    return "ERROR: Currently not a registration period"
+    return "ERROR: Currently not a registration or a game period"
 
 
 def id_of_game(game):
@@ -394,12 +422,47 @@ def join_group():
                 }
                 }
             )
-    
-    # I want to add this group_joined 
 
+   
+    games = mongo.db.games
+    cur_game = games.find_one({'id' : global_id})
+    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+        return render_template("game.html", error=True)
+    return render_template('not_game.html', error=True)
+   
 @app.route("/create_group", methods=["POST", "GET"])
 def create_group():
-    return "DO NOTHING"
+    users = mongo.db.users
+    groups = mongo.db.groups
+    games = mongo.db.games
+    login_user = users.find_one({'name' : session['user']})
+    group_name = request.form['group_name']
+    invitees_list = request.form.get('users')
+    users_list = [login_user]
+    owner = login_user
+
+    cursor = games.find({})
+    results = [res for res in cursor]
+    for res in results:
+        print(res)
+    cursor_2 = groups.find({})
+    results_2 = [res for res in cursor_2]
+    for res in results_2:
+        if group_name == res['name']:
+            return render_template('register.html', group_name_exists=True)
+        print(res)
+    # Add a group with the group name and the invitees list: group name, invitees, users
+    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list})
+
+    # add the group name to the game
+    
+    games.update({'name' : global_id}, {'$push': {'groups': group_name}})
+
+    # Check if the game is currently ongoing or not and determine which template to render
+    cur_game = games.find_one({'id' : global_id})
+    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+        return render_template("game.html", error=True)
+    return render_template('not_game.html', error=True)
 
 
 if __name__ == "__main__":

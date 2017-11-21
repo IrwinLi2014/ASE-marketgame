@@ -51,12 +51,14 @@
         <h6><strong>Create New Group</strong></h6>
         	<form method=POST action="{{ url_for('create_group') }}">
             <div class="form-group">
-                <label for="groupNameInput">Group Name</label>
-                <input type='text' name='group_name' placeholder="Name">
-            
+              <label for="groupNameInput">Group Name</label>
+              <input type='text' name='group_name' placeholder="Name">
+              {% if group_name_exists %}
+                {% include 'partials/group_name_exists_error.html' %}
+              {% endif %}
               <label>Find Members</label>
   				    <input type="text" id="txtName" readonly="readonly"> 
-  				    <select class="users" width="300px" multiple>
+  				    <select name="users" width="300px" multiple>
 					      {% for o in all_users %}
     					     <option value="{{ o }}">{{ o }}</option>
                 {% endfor %}
