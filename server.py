@@ -107,35 +107,35 @@ def logout():
 
 @app.route("/profile", methods=["GET"])
 def profile():
-	users = mongo.db.users
-	login_user = users.find_one({'name' : session['user']})
-	stocks = login_user['stocks']
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    admin = login_user.get("admin")
+    if admin == True:
+        return render_template("admin.html", error=True)
+    stocks = login_user['stocks']
+    total_cost = 0
+    total_market_value = 0
+    total_gain = 0
+    total_gain_percentage = 0
 
-	total_cost = 0
-	total_market_value = 0
-	total_gain = 0
-	total_gain_percentage = 0
-
-	for stock in stocks:
-		ticker = stock['ticker']
-		data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
-		stock['price'] = data['Close'].iloc[-1]
-		previous_close_price = data['Close'].iloc[-2]
-		stock['change'] = stock['price'] - previous_close_price
-		stock['change_percentage'] = stock['change'] / stock['price'] * 100
-		stock['market_value'] = stock['price'] * stock['shares']
-		stock['gain'] = stock['market_value'] - stock['cost']
-		if stock['shares'] == 0:
-			stock['gain_percentage'] = 0
-		else:
-			stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
-
-		total_cost += stock['cost']
-		total_market_value += stock['market_value'] 
-		total_gain = total_market_value - total_cost
-		total_gain_percentage = total_gain / total_cost * 100
-
-	return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+    for stock in stocks:
+        ticker = stock['ticker']
+        data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
+        stock['price'] = data['Close'].iloc[-1]
+        previous_close_price = data['Close'].iloc[-2]
+        stock['change'] = stock['price'] - previous_close_price
+        stock['change_percentage'] = stock['change'] / stock['price'] * 100
+        stock['market_value'] = stock['price'] * stock['shares']
+        stock['gain'] = stock['market_value'] - stock['cost']
+        if stock['shares'] == 0:
+            stock['gain_percentage'] = 0
+        else:
+            stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+        total_cost += stock['cost']
+        total_market_value += stock['market_value'] 
+        total_gain = total_market_value - total_cost
+        total_gain_percentage = total_gain / total_cost * 100
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
 
 
 
@@ -290,9 +290,6 @@ def add_stock():
 def games():
     users = mongo.db.users
     login_user = users.find_one({'name' : session['user']})
-    admin = login_user.get("admin")
-    if admin == True:
-        return render_template("admin.html", error=True)
     games = mongo.db.games
     cursor = games.find({})
 
@@ -348,15 +345,29 @@ def add_game():
     games = mongo.db.games
     new_id = id_of_game(games) + 1
 
+    if request.form['regdate1'] > request.form['regdate2']:
+        return render_template("admin.html", registration_error = True)
+    if request.form['date1'] > request.form['date2']:
+        return render_template("admin.html", game_error = True)
+    if request.form['regdate2'] > request.form['date1']:
+        return render_template("admin.html", reg_game_error = True)
+    if datetime.datetime.strptime(request.form['regdate2'], '%Y-%m-%d') < datetime.datetime.now():
+        return render_template("admin.html", cur_reg_error = True)
+    if datetime.datetime.strptime(request.form['date1'], '%Y-%m-%d') < datetime.datetime.now():
+        return render_template("admin.html", cur_game_error = True)
+
     cursor = games.find({})
     results = [res for res in cursor]
     for res in results:
-        overlap = check_date_overlap(request.form['date1'], request.form['date2'], res['start_date'], res['end_date'])
-        if overlap == True:
-            return "ERROR: overlap in other game dates"
+        overlap_1 = check_date_overlap(request.form['date1'], request.form['date2'], res['start_date'], res['end_date'])
+        overlap_2 = check_date_overlap(request.form['regdate1'], request.form['regdate2'], res['reg_start_date'], res['reg_end_date'])
+        if overlap_1 == True:
+            return render_template("admin.html", game_overlap = True)
+        if overlap_2 == True:
+            return render_template("admin.html", registration_overlap = True)
 
     games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user})
-    return render_template("admin.html", error=True)
+    return render_template("game_creation.html", error = True)
 
 @app.route("/add_admin", methods=["POST"])
 def add_admin():
@@ -372,7 +383,19 @@ def add_admin():
 
 @app.route("/join_group", methods=["POST", "GET"])
 def join_group():
-    return "DO NOTHING"
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    groups = mongo.db.groups
+    group_name = request.form.get('option')
+    groups.update(
+                { 'name': group_name},
+                { '$push': {
+                    'users': login_user
+                }
+                }
+            )
+    
+    # I want to add this group_joined 
 
 @app.route("/create_group", methods=["POST", "GET"])
 def create_group():
