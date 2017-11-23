@@ -34,16 +34,19 @@
         	<tbody>
         		{% for stock in stocks %}
                 <tr>
-                    <td>{{ stock["name"] }}</td>
+                    <td >{{ stock["name"] }}</td>
                     <td>{{ stock["ticker"] }}</td>
                     <td>{{ '{0:.2f}'.format(stock["price"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["change"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["change_percentage"]) }}</td>
-                    <td>{{ '{0:.0f}'.format(stock["shares"]) }}</td>
+                    <td contenteditable="true">{{ '{0:.0f}'.format(stock["shares"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["cost"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["market_value"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["gain"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["gain_percentage"]) }}</td>
+                    <td>
+                        <button class="editbtn">Edit</button>
+                    </td>
                 </tr>
           		{% endfor %}
             </tbody>
@@ -66,4 +69,5 @@
         	
 
         </table>
+
 {% endblock %}
