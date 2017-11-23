@@ -160,9 +160,9 @@ def profile():
 			ticker = stock['ticker']
 			print(ticker)
 			#CHANGE!
-			#stock['price'], previous_close_price, *rest = stock_info(ticker)
-			stock['price'] = 50
-			previous_close_price = 40
+			stock['price'], previous_close_price, *rest = stock_info(ticker)
+			#stock['price'] = 50
+			#previous_close_price = 40
 			print(stock['price'])
 			print(previous_close_price)
 			
