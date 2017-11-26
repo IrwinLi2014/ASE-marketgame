@@ -121,9 +121,9 @@ def profile():
         for res in results:
             if datetime.datetime.strptime(res["end_date"], '%Y-%m-%d') < datetime.datetime.now():
                 past_games.append(res)
-            else if datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
+            if datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
                 future_games.append(res)
-            else:
+            else: 
                 cur_games.append(res)
             return render_template("admin.html", past_games = past_games, cur_games = cur_games, future_games = future_games)
     stocks = login_user['stocks']
