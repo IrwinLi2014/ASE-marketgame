@@ -34,7 +34,7 @@
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
             	{% block nav %}
-                {% endblock %}
+              {% endblock %}
             </ul>
             <form method=POST action="{{ url_for('search') }}" class="form-inline mt-2 mt-md-0">
                 <input class="form-control mr-sm-2" type="text" id= "search" name="search" placeholder="search for stock" aria-label="Search" list="searchresults" autocomplete="off">

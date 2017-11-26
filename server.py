@@ -121,7 +121,11 @@ def profile():
         for res in results:
             if datetime.datetime.strptime(res["end_date"], '%Y-%m-%d') < datetime.datetime.now():
                 past_games.append(res)
+<<<<<<< HEAD
             if datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
+=======
+            elif datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
+>>>>>>> a6d5526298836e161a5e1294132852071b74e8ed
                 future_games.append(res)
             else: 
                 cur_games.append(res)
