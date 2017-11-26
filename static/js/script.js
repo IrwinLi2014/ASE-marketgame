@@ -17,10 +17,5 @@ $(document).ready( function() {
         });
     }, false);
 
-    $(".editbtn").click(function(){
-        alert("Hello! I am an alert box!!");
-        //$(this).html($(this).html() == 'edit' ? 'modify' : 'edit');
-    });
-
 } );
 

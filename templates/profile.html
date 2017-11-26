@@ -1,16 +1,81 @@
 {% extends "layout.html" %}
 
+{% block header %}
+    <script>
+
+    function isInt(n) {
+        return n % 1 === 0 && n != "";
+    }
+
+    var old_shares = 0; 
+    function edit_shares(e) {
+        var my_portfolio = document.getElementById('my_portfolio');
+        var row_index = e.parentNode.parentNode.rowIndex; 
+        
+        if (e.innerHTML == "edit") {
+            //change button to save button
+            e.innerHTML = "save";
+            old_shares = parseInt(my_portfolio.rows[row_index].cells[5].innerHTML); //column 5 = shares
+            my_portfolio.rows[row_index].cells[5].contentEditable = "true"; 
+        } else {
+            //change button back to edit button
+            e.innerHTML = "edit";
+            my_portfolio.rows[row_index].cells[5].contentEditable = "false";
+            var new_shares = my_portfolio.rows[row_index].cells[5].innerHTML;
+            
+            if (isInt(new_shares) && new_shares >= 0) {
+                //send form to server
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{{ url_for('add_stock') }}";   
+
+                var ticker = document.createElement("input"); 
+                ticker.name = "ticker";
+                ticker.value = my_portfolio.rows[row_index].cells[1].innerHTML;
+                form.appendChild(ticker);
+
+                var name = document.createElement("input"); 
+                name.name = "name"; 
+                name.value = my_portfolio.rows[row_index].cells[0].innerHTML;
+                form.appendChild(name);
+
+                var close_price = document.createElement("input");
+                close_price.name = "close_price";
+                close_price.value = my_portfolio.rows[row_index].cells[2].innerHTML;
+                form.appendChild(close_price);
+
+                var shares = document.createElement("input");
+                shares.name = "shares";
+                shares.value = new_shares - old_shares; //it should really just be new_shares but how add_stock works is new_shares <- new shares + old_shares
+                form.appendChild(shares);
+
+                document.body.appendChild(form);
+
+                form.submit();
+                
+            } else {
+                alert("Please enter a valid number of shares");
+                my_portfolio.rows[row_index].cells[5].innerHTML = old_shares;
+            }
+            
+        }
+    }
+
+    </script>
+{% endblock %}
+
 {% block title %}Profile{% endblock %}
+
 {% block nav %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-                </li>
-                <li class="nav-item active">
-                  <a class="nav-link" href="{{ url_for('profile') }}">Profile <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Games</a>
-                </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+    </li>
+    <li class="nav-item active">
+      <a class="nav-link" href="{{ url_for('profile') }}">Profile <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Games</a>
+    </li>
 {% endblock %}
 
 {% block body %}
@@ -18,7 +83,7 @@
 {% endblock %}
 
 {% block content %}
-        <table class='table table-hover table-bordered table-condensed table-striped' border='1'>
+        <table id='my_portfolio' class='table table-hover table-bordered table-condensed table-striped' border='1'>
     		<thead>
                 <th scope="col">Name</th>
         		<th scope="col">Ticker</th>
@@ -39,13 +104,13 @@
                     <td>{{ '{0:.2f}'.format(stock["price"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["change"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["change_percentage"]) }}</td>
-                    <td contenteditable="true">{{ '{0:.0f}'.format(stock["shares"]) }}</td>
+                    <td contenteditable="false">{{ '{0:.0f}'.format(stock["shares"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["cost"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["market_value"]) }}</td>
                     <td>{{ '{0:.0f}'.format(stock["gain"]) }}</td>
                     <td>{{ '{0:.2f}'.format(stock["gain_percentage"]) }}</td>
                     <td>
-                        <button class="editbtn">Edit</button>
+                        <button type="button" onclick="edit_shares(this)">edit</button>
                     </td>
                 </tr>
           		{% endfor %}
