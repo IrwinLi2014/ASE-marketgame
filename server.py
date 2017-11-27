@@ -115,28 +115,12 @@ def profile():
     cur_games = []
     future_games = []
     if admin == True:
-        games = mongo.db.games
-        cursor = games.find({})
-        results = [res for res in cursor]
-        for res in results:
-            if datetime.datetime.strptime(res["end_date"], '%Y-%m-%d') < datetime.datetime.now():
-                past_games.append(res)
-<<<<<<< HEAD
-
-            elif datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
-
-=======
-            elif datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
->>>>>>> 982732fa5aac77cee5f66e2318b4c8650fa50462
-                future_games.append(res)
-            else: 
-                cur_games.append(res)
-            return render_template("admin.html", past_games = past_games, cur_games = cur_games, future_games = future_games)
+        return render_template("admin.html")
     stocks = login_user['stocks']
-    total_cost = 0
-    total_market_value = 0
-    total_gain = 0
-    total_gain_percentage = 0
+    total_cost = 0.0
+    total_market_value = 0.0
+    total_gain = 0.0
+    total_gain_percentage = 0.0
 
     for stock in stocks:
         ticker = stock['ticker']
@@ -152,6 +136,7 @@ def profile():
         else:
             stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
         total_cost += stock['cost']
+
         total_market_value += stock['market_value'] 
         total_gain = total_market_value - total_cost
         total_gain_percentage = total_gain / total_cost * 100
@@ -308,12 +293,13 @@ def add_stock():
 
 @app.route("/games")
 def games():
+
+
     users = mongo.db.users
     login_user = users.find_one({'name' : session['user']})
     games = mongo.db.games
     cursor = games.find({})
     groups = mongo.db.groups
-
 
     results = [res for res in cursor]
     cur_date = datetime.datetime.now()
@@ -326,31 +312,28 @@ def games():
         reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
         reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
 
-        print("&&&&&&&&&&&&&&&&&&&&&&")
-        print("reg_start: ")
-        print(reg_start)
-        print("cur_date: ")
-        print(cur_date)
-        print("reg_end: ")
-        print(reg_end)
-        print(reg_start < cur_date)
+        id = res["id"]
+        global global_id
+        global_id = id
 
-        print("&&&&&&&&&&&&&&&&&&&&&")
         if cur_date > game_start and cur_date < game_end:
-            print("in this condition")
             game_groups = res["groups"]
             for group in game_groups:
                 users_list = groups.find_one({'name': group})
                 if login_user['name'] in users_list['users']:
-                    return render_template("game.html", error=True)
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
 
         if cur_date >= reg_start and cur_date <= reg_end:
             # you want to start rendering the template
             # you want to retrieve the list of groups the user was invited to
-            id = res["id"]
-            global global_id
-            global_id = id
+            
             group_list = res["groups"]
+
+            # check if the login user is already in the database for the groups for the game
+            for group_name in group_list:
+                cur_group = groups.find_one({'name' : group_name})
+                if login_user['name'] in cur_group['users']:
+                    return render_template("not_game.html")
             for group_name in group_list:
                 cur_group = groups.find_one({'name' : group_name})
                 if cur_group is not None:
@@ -435,12 +418,12 @@ def join_group():
     groups.update(
                 { 'name': group_name},
                 { '$push': {
-                    'users': login_user
+                    'users': login_user['name']
                 }
                 }
             )
 
-   
+
     games = mongo.db.games
     cur_game = games.find_one({'id' : global_id})
     if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
@@ -454,8 +437,8 @@ def create_group():
     games = mongo.db.games
     login_user = users.find_one({'name' : session['user']})
     group_name = request.form['group_name']
-    invitees_list = request.form.getlist('users')
-    print(invitees_list)
+    invitees_string = request.form['txtName']
+    invitees_list = [x.strip() for x in invitees_string[:-1].split(',')]
     users_list = [login_user['name']]
     owner = login_user['name']
 
@@ -471,19 +454,7 @@ def create_group():
     groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list})
 
     # add the group name to the game
-    print(global_id)
     games.update({'id' : global_id}, {'$push': {'groups': group_name}})
-
-    print("**************************************************************")
-    cursor_2 = games.find({})
-    cursor_3 = groups.find({})
-    results_2 = [res for res in cursor_2]
-    for res in results_2:
-        print(res)
-    results_3 = [res for res in cursor_3]
-    for res in results_3:
-        print(res)
-    print("****************************************************************")
 
     # Check if the game is currently ongoing or not and determine which template to render
     cur_game = games.find_one({'id' : global_id})

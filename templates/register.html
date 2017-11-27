@@ -34,8 +34,8 @@
 
         <h6><strong>Join Group</strong></h6>
 
-        <form>
-          <div class="form-group" action="{{ url_for('join_group') }}" method="POST">
+        <form action="{{ url_for('join_group') }}" method="POST">
+          <div class="form-group">
           <!--<label for="formControlSelect">Select :</label>-->
           	 <select name="option" class="form-control" id="formControlSelect">
           		{% for o in invited_groups %}
@@ -60,8 +60,8 @@
                 {% include 'partials/group_name_exists_error.html' %}
               {% endif %}
               <label>Find Members</label>
-  				    <input type="text" id="txtName" readonly="readonly"> 
-  				    <select class="users" width="300px" multiple>
+  				    <input type="text" id="txtName" name="txtName" readonly="readonly"> 
+  				    <select class="users" name="users" width="300px" multiple>
 					      {% for o in all_users %}
     					     <option value="{{ o }}">{{ o }}</option>
                 {% endfor %}
