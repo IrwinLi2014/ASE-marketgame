@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for
 from flask_pymongo import PyMongo
+from flask_pymongo import MongoClient
 
 from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
@@ -24,11 +25,13 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/winydb'
 
 mongo = PyMongo(app)
 
+global_id = 0
 
 @app.route("/")
 @app.route("/index")
 def index():
 	return render_template("index.html")
+
 
 
 
@@ -73,7 +76,7 @@ def register():
 	if existing_user is None:
 		if request.form['password'] == request.form['confirmPassword']:
 			hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': []})
+			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': [], 'admin': False})
 			session['user'] = request.form['username']
 			return redirect(url_for("home"))
 		else:
@@ -101,6 +104,7 @@ def login():
 def logout():
 	del session['user']
 	return redirect(url_for("index"))
+
 
 
 
@@ -179,6 +183,7 @@ def profile():
 
 	except:
 		return "ERROR: AlphaVantage server is overloaded"
+
 
 
 
@@ -306,6 +311,177 @@ def add_stock():
 			)
 
 	return redirect(url_for("profile"))
+
+@app.route("/games")
+def games():
+
+
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    games = mongo.db.games
+    cursor = games.find({})
+    groups = mongo.db.groups
+
+    results = [res for res in cursor]
+    cur_date = datetime.datetime.now()
+    invited_groups = []
+   
+    for res in results:
+
+        game_start = datetime.datetime.strptime(res.get("start_date"), '%Y-%m-%d')
+        game_end = datetime.datetime.strptime(res.get("end_date"), '%Y-%m-%d')
+        reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
+        reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
+
+        id = res["id"]
+        global global_id
+        global_id = id
+
+        if cur_date > game_start and cur_date < game_end:
+            game_groups = res["groups"]
+            for group in game_groups:
+                users_list = groups.find_one({'name': group})
+                if login_user['name'] in users_list['users']:
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+
+        if cur_date >= reg_start and cur_date <= reg_end:
+            # you want to start rendering the template
+            # you want to retrieve the list of groups the user was invited to
+            
+            group_list = res["groups"]
+
+            # check if the login user is already in the database for the groups for the game
+            for group_name in group_list:
+                cur_group = groups.find_one({'name' : group_name})
+                if login_user['name'] in cur_group['users']:
+                    return render_template("not_game.html")
+            for group_name in group_list:
+                cur_group = groups.find_one({'name' : group_name})
+                if cur_group is not None:
+                    invitees = cur_group['invitees']
+                    if login_user['name'] in invitees:
+                        invited_groups.append(group_name)
+
+            # retrieve a list of all users to invite
+            all_users = []
+            cursor_2 = users.find({})
+            results_2 = [res for res in cursor_2]
+            for res in results_2:
+                if res['name'] == login_user['name']:
+                    continue
+                all_users.append(res['name'])
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+    return "ERROR: Currently not a registration or a game period"
+
+
+def id_of_game(game):
+    id = 0
+    cursor = game.find({})
+
+    results = [res for res in cursor]
+    for res in results:
+        id+=1
+    return id
+
+def check_date_overlap(date1, date2, date3, date4):
+    return max(date1, date3) < min(date2, date4)
+
+
+@app.route("/add_game", methods=["POST"])
+def add_game():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    games = mongo.db.games
+    new_id = id_of_game(games) + 1
+
+    if request.form['regdate1'] > request.form['regdate2']:
+        return render_template("admin.html", registration_error = True)
+    if request.form['date1'] > request.form['date2']:
+        return render_template("admin.html", game_error = True)
+    if request.form['regdate2'] > request.form['date1']:
+        return render_template("admin.html", reg_game_error = True)
+    if datetime.datetime.strptime(request.form['regdate2'], '%Y-%m-%d') < datetime.datetime.now():
+        return render_template("admin.html", cur_reg_error = True)
+    if datetime.datetime.strptime(request.form['date1'], '%Y-%m-%d') < datetime.datetime.now():
+        return render_template("admin.html", cur_game_error = True)
+
+    cursor = games.find({})
+    results = [res for res in cursor]
+    for res in results:
+        overlap_1 = check_date_overlap(request.form['date1'], request.form['date2'], res['start_date'], res['end_date'])
+        overlap_2 = check_date_overlap(request.form['regdate1'], request.form['regdate2'], res['reg_start_date'], res['reg_end_date'])
+        if overlap_1 == True:
+            return render_template("admin.html", game_overlap = True)
+        if overlap_2 == True:
+            return render_template("admin.html", registration_overlap = True)
+
+    games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user['name']})
+    return render_template("game_creation.html", error = True)
+
+@app.route("/add_admin", methods=["POST"])
+def add_admin():
+    users = mongo.db.users
+    added_admin = users.find_one({'name' : request.form['admin_user']})
+    if added_admin is None:
+        return "ERROR: User does not exist"
+    users.update(
+        {'name': request.form['admin_user'], 'admin': True}
+    )
+    return render_template("admin.html", error=True)
+
+
+@app.route("/join_group", methods=["POST", "GET"])
+def join_group():
+    users = mongo.db.users
+    login_user = users.find_one({'name' : session['user']})
+    groups = mongo.db.groups
+    group_name = request.form.get('option')
+    groups.update(
+                { 'name': group_name},
+                { '$push': {
+                    'users': login_user['name']
+                }
+                }
+            )
+
+
+    games = mongo.db.games
+    cur_game = games.find_one({'id' : global_id})
+    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+        return render_template("game.html", error=True)
+    return render_template('not_game.html', error=True)
+   
+@app.route("/create_group", methods=["POST", "GET"])
+def create_group():
+    users = mongo.db.users
+    groups = mongo.db.groups
+    games = mongo.db.games
+    login_user = users.find_one({'name' : session['user']})
+    group_name = request.form['group_name']
+    invitees_string = request.form['txtName']
+    invitees_list = [x.strip() for x in invitees_string[:-1].split(',')]
+    users_list = [login_user['name']]
+    owner = login_user['name']
+
+    cursor = groups.find({})
+    results = [res for res in cursor]
+    for res in results:
+        if group_name == res['name']:
+            return render_template('register.html', group_name_exists=True)
+
+
+
+    # Add a group with the group name and the invitees list: group name, invitees, users
+    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list})
+
+    # add the group name to the game
+    games.update({'id' : global_id}, {'$push': {'groups': group_name}})
+
+    # Check if the game is currently ongoing or not and determine which template to render
+    cur_game = games.find_one({'id' : global_id})
+    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+        return render_template("game.html", error=True)
+    return render_template('not_game.html', error=True)
 
 
 if __name__ == "__main__":

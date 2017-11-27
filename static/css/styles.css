@@ -87,6 +87,11 @@ body {
 	border-color: #ffffff;
 	color: #ffffff;
 }
+.join-group-btn {
+  padding-top: 10px;
+  color: #ffffff;
+}
+
 .jumbotron {
 	background-color: #ff9009;
 }

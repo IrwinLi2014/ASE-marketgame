@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Register{% endblock %}
+{% block nav %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('games') }}">Games<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('games') }}">Leaderboard</a>
+                </li>
+{% endblock %}
+
+{% block body %}
+	<h1>This is not a current game period. Please click the button below to register for the next game!</h1>
+
+	<button class="btn btn-md align-middle btn-outline-secondary" type="submit">Register</button>
+{% endblock %}
