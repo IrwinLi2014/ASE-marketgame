@@ -41,6 +41,13 @@ def create_account():
 @app.route("/home", methods=["GET"])
 def home():
 	if "user" in session:
+		fp_url = "https://newsapi.org/v2/top-headlines?sources=financial-post&apiKey=e439238bd7bc4cde8d2937a0178554b0"
+		result = requests.get(fp_url).json()
+
+		#print(result);
+		for x in result['articles']:
+			print(x['title']);
+
 		return render_template("home.html")
 	return redirect(url_for("index"))
 
