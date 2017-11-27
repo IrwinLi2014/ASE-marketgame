@@ -6,15 +6,16 @@ from bokeh.plotting import output_file, show, figure
 from bokeh.palettes import Spectral11
 from bokeh.embed import components 
 
-import bcrypt
-import datetime
-import pandas
-import pandas_datareader.data as web
-import requests
-import simplejson as json
-import sys
-import re
+from datetime import datetime
 from pymongo import MongoClient
+
+import bcrypt
+import json
+import pandas
+import re
+import requests
+#import simplejson as json
+import sys
 
 
 app = Flask(__name__)
@@ -106,41 +107,84 @@ def logout():
 
 
 
+
+# helper functions for getting stock data based on ticker
+def stock_info(ticker):
+	
+	# https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=GOOG&interval=1min&apikey=8HEWLV32V6QMXG1L
+	av_intraday_url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + ticker + "&interval=1min&apikey=8HEWLV32V6QMXG1L"
+	print("1: ")
+	result = requests.get(av_intraday_url)
+	print(result.status_code)
+	result = result.json()
+	last_refreshed = result["Meta Data"]["3. Last Refreshed"]
+	close_price = float(result["Time Series (1min)"][last_refreshed]["4. close"])
+
+	av_daily_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&apikey=8HEWLV32V6QMXG1L"
+	print("2: ")
+	result = requests.get(av_daily_url)
+	print(result.status_code)
+	result = result.json()
+	daily_time_series = result["Time Series (Daily)"]
+	ordered_daily_time_series = sorted(daily_time_series.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	previous_day = ordered_daily_time_series[1]
+	previous_close_price = float(previous_day[1][ "4. close"])
+
+	most_recent_day = ordered_daily_time_series[0]
+	open_price = float(most_recent_day[1]["1. open"])
+	low_price = float(most_recent_day[1]["3. low"])
+	high_price = float(most_recent_day[1]["2. high"])
+	volume = float(most_recent_day[1]["5. volume"])
+
+	av_daily_url_full = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=8HEWLV32V6QMXG1L"
+	print("3: ")
+	result = requests.get(av_daily_url_full)
+	print(result.status_code)
+	result = result.json()
+	daily_time_series_full = result["Time Series (Daily)"]
+	#list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
+	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
+
+
+
 @app.route("/profile", methods=["GET"])
 def profile():
-    users = mongo.db.users
-    login_user = users.find_one({'name' : session['user']})
-    admin = login_user.get("admin")
-    past_games = []
-    cur_games = []
-    future_games = []
-    if admin == True:
-        return render_template("admin.html")
-    stocks = login_user['stocks']
-    total_cost = 0.0
-    total_market_value = 0.0
-    total_gain = 0.0
-    total_gain_percentage = 0.0
+	try:
+		users = mongo.db.users
+		login_user = users.find_one({'name' : session['user']})
+		stocks = login_user['stocks']
 
-    for stock in stocks:
-        ticker = stock['ticker']
-        data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
-        stock['price'] = data['Close'].iloc[-1]
-        previous_close_price = data['Close'].iloc[-2]
-        stock['change'] = stock['price'] - previous_close_price
-        stock['change_percentage'] = stock['change'] / stock['price'] * 100
-        stock['market_value'] = stock['price'] * stock['shares']
-        stock['gain'] = stock['market_value'] - stock['cost']
-        if stock['shares'] == 0:
-            stock['gain_percentage'] = 0
-        else:
-            stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
-        total_cost += stock['cost']
+		total_cost = 0
+		total_market_value = 0
+		total_gain = 0
+		total_gain_percentage = 0
 
-        total_market_value += stock['market_value'] 
-        total_gain = total_market_value - total_cost
-        total_gain_percentage = total_gain / total_cost * 100
-    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+		for stock in stocks:
+			ticker = stock['ticker']
+			stock['price'], previous_close_price, *rest = stock_info(ticker)
+			previous_close_price = 40
+			
+			stock['change'] = stock['price'] - previous_close_price
+			stock['change_percentage'] = stock['change'] / stock['price'] * 100
+			stock['market_value'] = stock['price'] * stock['shares']
+			stock['gain'] = stock['market_value'] - stock['cost']
+			if stock['shares'] == 0:
+				stock['gain_percentage'] = 0
+			else:
+				stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+
+			total_cost += stock['cost']
+			total_market_value += stock['market_value'] 
+			total_gain = total_market_value - total_cost
+			total_gain_percentage = total_gain / total_cost * 100
+
+		return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+
+	except:
+		return "ERROR: AlphaVantage server is overloaded"
+
+
 
 
 
@@ -149,82 +193,59 @@ def profile():
 '''
 @app.route("/search", methods=["POST"])
 def search():
-
-	#convert ticker to all-caps
-	ticker = request.form['search'].upper()
-
-	#verify that stock ticker exists
-	url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
-	result = requests.get(url).json()
-
-	name_found = False
-	for x in result['ResultSet']['Result']:
-		if x['symbol'] == ticker:
-			name = x['name'] #get stock name from ticker
-			name_found = True
-	if name_found == False:
-		return "ERROR: invalid ticker"
-
-	#get stock data from ticker input
-	data = web.DataReader(ticker, 'google', datetime.datetime.now(), datetime.datetime.now())
-	close_price = data['Close'].iloc[-1]
-	previous_close_price = data['Close'].iloc[-2]
-	price_change = close_price - previous_close_price
-	price_change_percentage = (close_price - previous_close_price) / close_price * 100
-	if price_change > 0:
-		price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
-	else:
-		price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
-
-	open_price = data['Open'].iloc[-1]
-	low_price = data['Low'].iloc[-1]
-	high_price = data['High'].iloc[-1]
-	volume = data['Volume'].iloc[-1]
-	volume_str = "{:.2f}".format(volume / 10**6) + "M"
-
-
-	#get current share holdings of stock
-	users = mongo.db.users
-	stocks = users.find_one({'name' : session["user"]})["stocks"]
-	current_holdings = 0
-	for stock in stocks:
-		if stock["ticker"] == ticker:
-			current_holdings = stock["shares"]
-
-	#create stock's closing price chart
 	try:
-		#Quandl
-		api_url = 'https://www.quandl.com/api/v1/datasets/WIKI/%s.json?api_key=gVz7XbzeecyxHdkCn8yB' % ticker
-		session1 = requests.Session()
-		session1.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-		raw_data = session1.get(api_url)
-		a = raw_data.json()
+		#convert ticker to all-caps
+		ticker = request.form['search'].upper()
 
-		df = pandas.DataFrame(a['data'], columns=a['column_names'])
-		df['Date'] = pandas.to_datetime(df['Date'])
+		#verify that stock ticker exists
+		yahoo_url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
+		result = requests.get(yahoo_url).json()
 
-		"""
-		#Alphavantage
+		name_found = False
+		for x in result['ResultSet']['Result']:
+			if x['symbol'] == ticker:
+				name = x['name'] #get stock name from ticker
+				name_found = True
+		if name_found == False:
+			return "ERROR: invalid ticker"
+
+		close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full = stock_info(ticker)
+
+		price_change = close_price - previous_close_price
+		price_change_percentage = (close_price - previous_close_price) / close_price * 100
+		if price_change > 0:
+			price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
+		else:
+			price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
 		
-		api_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=8HEWLV32V6QMXG1L"
-		session = requests.Session()
-		session.mount('http://', requests.adapters.HTTPAdapter(max_retries=3))
-		raw_data = session.get(api_url)
-		a = raw_data.json()
+		volume_str = "{:.2f}".format(volume / 10**6) + "M"
 
-		df = pandas.DataFrame(a['data'], columns=a['column_names'])
+		#get current share holdings of stock
+		users = mongo.db.users
+		stocks = users.find_one({'name' : session["user"]})["stocks"]
+		current_holdings = 0
+		for stock in stocks:
+			if stock["ticker"] == ticker:
+				current_holdings = stock["shares"]
 
-		"""
+		#create stock's closing price chart
+		x_date = []
+		y_close = []
 
-		p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='date', x_axis_type='datetime')
-		p.line(x=df['Date'].values, y=df['Close'].values,line_width=2)
+		#ordered_daily_time_series_full is a list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
+		for day in ordered_daily_time_series_full:
+			x_date.append(pandas.to_datetime(day[0]))
+			y_close.append(float(day[1]['4. close']))
+
+		p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='Date', x_axis_type='datetime')
+		p.line(x = x_date, y = y_close, line_width = 2)
 
 		script, div = components(p)
 	   
 		return render_template("search.html", ticker = ticker, close_price = close_price, previous_close_price = previous_close_price, price_change_str = price_change_str, open_price = open_price, low_price = low_price, high_price = high_price, volume = volume_str, name = name, script = script, div = div, current_holdings = current_holdings)
-	
+		
 	except:
-		return "ERROR: ticker not supported"
+		return "ERROR: AlphaVantage server is overloaded"
 
 
 
@@ -232,9 +253,10 @@ def search():
 def add_stock():
 
 	users = mongo.db.users
-	data = web.DataReader(request.form['ticker'], 'google', datetime.datetime.now(), datetime.datetime.now())
-	#check for empty user input
+	ticker = request.form['ticker']
+	close_price = float(request.form['close_price'])
 
+	#check for empty user input
 	if len(request.form['shares']) == 0:
 		shares = 0
 	else:
@@ -243,7 +265,7 @@ def add_stock():
 	stocks = users.find_one({'name' : session["user"]})["stocks"]
 	existing_stock = None
 	for stock in stocks:
-		if stock["ticker"] == request.form['ticker']:
+		if stock["ticker"] == ticker:
 			existing_stock = stock
 
 	if existing_stock is None:
@@ -252,12 +274,12 @@ def add_stock():
 			{'$push': {
 				'stocks': {
 					'name': request.form['name'],
-					'ticker': request.form['ticker'],
+					'ticker': ticker,
 					'price': 0.0, #placeholder
 					'change': 0.0, #placeholder
 					'change_percentage': 0.0, #placeholder
 					'shares': int(shares),
-					'cost': data['Close'].iloc[-1] * int(shares),
+					'cost': close_price * int(shares),
 					'market_value': 0.0, #placeholder
 					'gain': 0.0, #placeholder
 					'gain_percentage': 0.0, #placeholder
@@ -267,21 +289,20 @@ def add_stock():
 		)
 
 	else:
-		print(existing_stock)
 		new_shares = existing_stock["shares"] + shares
 		if new_shares == 0:
 			users.update(
-				{ 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
+				{ 'name': session["user"], 'stocks.ticker': ticker },
 				{ '$pull': { 
-					'stocks': {'ticker': request.form['ticker'] }
+					'stocks': {'ticker': ticker }
 					}
 				}
 			)
 
 		else:
-			new_cost = data['Close'].iloc[-1] * shares + existing_stock["cost"]
+			new_cost = close_price * shares + existing_stock["cost"]
 			users.update(
-				{ 'name': session["user"], 'stocks.ticker': request.form['ticker'] },
+				{ 'name': session["user"], 'stocks.ticker': ticker },
 				{ '$set': {
 					'stocks.$.shares': new_shares,
 					'stocks.$.cost': new_cost,

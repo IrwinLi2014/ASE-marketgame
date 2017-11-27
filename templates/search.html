@@ -17,9 +17,8 @@
 {% endblock %}
 {% block body %}
   <h1>{{ name }} ({{ ticker }})</h1>
-  <h2>${{ close_price }}</h2> 
+  <h2>${{ '{0:.2f}'.format(close_price) }}</h2> 
   <h4 style="color:#838382">{{ price_change_str }}</h4>
-  <h6 style="color:#838382">At most recent close</h6>
 {% endblock %}
 
 {% block content %}
@@ -43,6 +42,7 @@
             <form method=POST action="{{ url_for('add_stock') }}">
                 <input type='hidden' name='name' value='{{ name }}'>
                 <input type='hidden' name='ticker' value='{{ ticker }}'>
+                <input type='hidden' name='close_price' value='{{ close_price }}'>
             
                 <label for='shares'>Shares</label>
                 <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>
