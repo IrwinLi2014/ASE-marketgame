@@ -121,11 +121,9 @@ def profile():
         for res in results:
             if datetime.datetime.strptime(res["end_date"], '%Y-%m-%d') < datetime.datetime.now():
                 past_games.append(res)
-<<<<<<< HEAD
-            if datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
-=======
+
             elif datetime.datetime.strptime(res["start_date"], '%Y-%m-%d') > datetime.datetime.now():
->>>>>>> a6d5526298836e161a5e1294132852071b74e8ed
+
                 future_games.append(res)
             else: 
                 cur_games.append(res)
@@ -312,6 +310,7 @@ def games():
     cursor = games.find({})
     groups = mongo.db.groups
 
+
     results = [res for res in cursor]
     cur_date = datetime.datetime.now()
     invited_groups = []
@@ -323,14 +322,25 @@ def games():
         reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
         reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
 
+        print("&&&&&&&&&&&&&&&&&&&&&&")
+        print("reg_start: ")
+        print(reg_start)
+        print("cur_date: ")
+        print(cur_date)
+        print("reg_end: ")
+        print(reg_end)
+        print(reg_start < cur_date)
+
+        print("&&&&&&&&&&&&&&&&&&&&&")
         if cur_date > game_start and cur_date < game_end:
+            print("in this condition")
             game_groups = res["groups"]
             for group in game_groups:
                 users_list = groups.find_one({'name': group})
-                if login_user in users_list:
+                if login_user['name'] in users_list['users']:
                     return render_template("game.html", error=True)
 
-        if cur_date > reg_start and cur_date < reg_end:
+        if cur_date >= reg_start and cur_date <= reg_end:
             # you want to start rendering the template
             # you want to retrieve the list of groups the user was invited to
             id = res["id"]
@@ -338,11 +348,10 @@ def games():
             global_id = id
             group_list = res["groups"]
             for group_name in group_list:
-                groups = mongo.db.groups
                 cur_group = groups.find_one({'name' : group_name})
                 if cur_group is not None:
                     invitees = cur_group['invitees']
-                    if login_user in invitees:
+                    if login_user['name'] in invitees:
                         invited_groups.append(group_name)
 
             # retrieve a list of all users to invite
@@ -398,7 +407,7 @@ def add_game():
         if overlap_2 == True:
             return render_template("admin.html", registration_overlap = True)
 
-    games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user})
+    games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user['name']})
     return render_template("game_creation.html", error = True)
 
 @app.route("/add_admin", methods=["POST"])
@@ -441,26 +450,36 @@ def create_group():
     games = mongo.db.games
     login_user = users.find_one({'name' : session['user']})
     group_name = request.form['group_name']
-    invitees_list = request.form.get('users')
-    users_list = [login_user]
-    owner = login_user
+    invitees_list = request.form.getlist('users')
+    print(invitees_list)
+    users_list = [login_user['name']]
+    owner = login_user['name']
 
-    cursor = games.find({})
+    cursor = groups.find({})
     results = [res for res in cursor]
     for res in results:
-        print(res)
-    cursor_2 = groups.find({})
-    results_2 = [res for res in cursor_2]
-    for res in results_2:
         if group_name == res['name']:
             return render_template('register.html', group_name_exists=True)
-        print(res)
+
+
+
     # Add a group with the group name and the invitees list: group name, invitees, users
     groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list})
 
     # add the group name to the game
-    
-    games.update({'name' : global_id}, {'$push': {'groups': group_name}})
+    print(global_id)
+    games.update({'id' : global_id}, {'$push': {'groups': group_name}})
+
+    print("**************************************************************")
+    cursor_2 = games.find({})
+    cursor_3 = groups.find({})
+    results_2 = [res for res in cursor_2]
+    for res in results_2:
+        print(res)
+    results_3 = [res for res in cursor_3]
+    for res in results_3:
+        print(res)
+    print("****************************************************************")
 
     # Check if the game is currently ongoing or not and determine which template to render
     cur_game = games.find_one({'id' : global_id})
