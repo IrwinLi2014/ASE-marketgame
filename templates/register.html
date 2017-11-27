@@ -26,7 +26,7 @@
     <div style = "width: 35%; float: left">
 
         <h6><strong>About</strong></h6>
-        <p class="text-muted">aljshdklfhaljsdhfklahdf</p>
+        <p class="text-muted">This is Game #1. Please register by either joining a group who has invited you or creating your own group.</p>
 
         <br>
         <hr width=100% align=left>
@@ -55,13 +55,13 @@
         	<form method=POST action="{{ url_for('create_group') }}">
             <div class="form-group">
               <label for="groupNameInput">Group Name</label>
-              <input type='text' name='group_name' placeholder="Name">
+              <input type='text' name='group_name'>
               {% if group_name_exists %}
                 {% include 'partials/group_name_exists_error.html' %}
               {% endif %}
               <label>Find Members</label>
   				    <input type="text" id="txtName" readonly="readonly"> 
-  				    <select name="users" width="300px" multiple>
+  				    <select class="users" width="300px" multiple>
 					      {% for o in all_users %}
     					     <option value="{{ o }}">{{ o }}</option>
                 {% endfor %}
@@ -70,11 +70,8 @@
               <script>
                 function SetName() {
                   var txtName = document.getElementById("txtName");
-                  //txtName.value = Array.prototype.filter.call( document.getElementById("users").options, el => el.selected).map(el => el.value).join(",");
                   var temp = $(".users option:selected").val();
                   txtName.value=txtName.value.concat(temp.concat(","));
-
-                  //alert(txtName.value)
                 }
               </script>
               <br><br>
