@@ -1,3 +1,26 @@
+.row {
+  display: flex;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+}
+
+.item.left {
+  flex-direction: row;
+}
+
+.item.left .well {
+  width: 100%;
+  align-self: stretch;
+}
+
+.item.left .well img {
+  height: 100%;
+}
+
+
 .hidden {
 	display: none;
 }

@@ -45,10 +45,22 @@ def home():
 		result = requests.get(fp_url).json()
 
 		#print(result);
-		for x in result['articles']:
-			print(x['title']);
+		news_links = []
+		img_links = []
 
-		return render_template("home.html")
+		links=[]
+		for x in result['articles']:
+			links.append((x['url'],x['urlToImage'],x['title']))
+			#print(x['title']);
+			#news_links.append(x['url'])
+			#img_links.append(x['urlToImage'])
+
+		#print(links)
+		links=links[0:4]
+		#news_links = news_links[0:4]
+		#img_links = img_links[0:4]
+
+		return render_template("home.html", links=links)
 	return redirect(url_for("index"))
 
 
