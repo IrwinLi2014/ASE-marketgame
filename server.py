@@ -153,6 +153,11 @@ def profile():
 	try:
 		users = mongo.db.users
 		login_user = users.find_one({'name' : session['user']})
+
+		# if user is an admin, then load the admin page
+		if login_user["admin"]:
+			return render_template("admin.html")
+
 		stocks = login_user['stocks']
 
 		total_cost = 0
@@ -323,15 +328,15 @@ def games():
     groups = mongo.db.groups
 
     results = [res for res in cursor]
-    cur_date = datetime.datetime.now()
+    cur_date = datetime.now()
     invited_groups = []
    
     for res in results:
 
-        game_start = datetime.datetime.strptime(res.get("start_date"), '%Y-%m-%d')
-        game_end = datetime.datetime.strptime(res.get("end_date"), '%Y-%m-%d')
-        reg_start = datetime.datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
-        reg_end = datetime.datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
+        game_start = datetime.strptime(res.get("start_date"), '%Y-%m-%d')
+        game_end = datetime.strptime(res.get("end_date"), '%Y-%m-%d')
+        reg_start = datetime.strptime(res.get("reg_start_date"), '%Y-%m-%d')
+        reg_end = datetime.strptime(res.get("reg_end_date"), '%Y-%m-%d')
 
         id = res["id"]
         global global_id
@@ -400,9 +405,9 @@ def add_game():
         return render_template("admin.html", game_error = True)
     if request.form['regdate2'] > request.form['date1']:
         return render_template("admin.html", reg_game_error = True)
-    if datetime.datetime.strptime(request.form['regdate2'], '%Y-%m-%d') < datetime.datetime.now():
+    if datetime.strptime(request.form['regdate2'], '%Y-%m-%d') < datetime.now():
         return render_template("admin.html", cur_reg_error = True)
-    if datetime.datetime.strptime(request.form['date1'], '%Y-%m-%d') < datetime.datetime.now():
+    if datetime.strptime(request.form['date1'], '%Y-%m-%d') < datetime.now():
         return render_template("admin.html", cur_game_error = True)
 
     cursor = games.find({})
@@ -415,7 +420,14 @@ def add_game():
         if overlap_2 == True:
             return render_template("admin.html", registration_overlap = True)
 
-    games.insert({'id' : new_id, 'groups' : [], 'start_date': request.form['date1'], 'end_date': request.form['date2'], 'reg_start_date': request.form['regdate1'], 'reg_end_date': request.form['regdate2'], 'admin': login_user['name']})
+    games.insert({'id' : new_id,
+                  'groups' : [],
+                  'start_date': request.form['date1'],
+                  'end_date': request.form['date2'],
+                  'reg_start_date': request.form['regdate1'],
+                  'reg_end_date': request.form['regdate2'],
+                  'admin': login_user['name'],
+                  'money': request.form['money']})
     return render_template("game_creation.html", error = True)
 
 @app.route("/add_admin", methods=["POST"])
@@ -447,7 +459,7 @@ def join_group():
 
     games = mongo.db.games
     cur_game = games.find_one({'id' : global_id})
-    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+    if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
         return render_template("game.html", error=True)
     return render_template('not_game.html', error=True)
    
@@ -472,17 +484,23 @@ def create_group():
 
 
     # Add a group with the group name and the invitees list: group name, invitees, users
-    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list})
+    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list, 'stocks': []})
 
     # add the group name to the game
     games.update({'id' : global_id}, {'$push': {'groups': group_name}})
 
     # Check if the game is currently ongoing or not and determine which template to render
     cur_game = games.find_one({'id' : global_id})
-    if datetime.datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.datetime.now() and datetime.datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.datetime.now():
+    if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
         return render_template("game.html", error=True)
     return render_template('not_game.html', error=True)
 
+
+@app.route("/leaderboard", methods=["GET"])
+def leaderboard():
+    groups = mongo.db.groups
+    unranked = list(groups.find({}))
+    ranked = sorted(unranked, key=lambda k: k[""])
 
 if __name__ == "__main__":
 	app.secret_key = 'mysecret'
