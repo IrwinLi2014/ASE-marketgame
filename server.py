@@ -437,7 +437,8 @@ def add_admin():
     if added_admin is None:
         return "ERROR: User does not exist"
     users.update(
-        {'name': request.form['admin_user'], 'admin': True}
+        {'name': request.form['admin_user']},
+        {'$set': {'admin': True}}
     )
     return render_template("admin.html", error=True)
 
