@@ -81,7 +81,8 @@ def home():
 
 			except:
 				continue
-    fp_url = "https://newsapi.org/v2/top-headlines?sources=financial-post&apiKey=e439238bd7bc4cde8d2937a0178554b0"
+				
+		fp_url = "https://newsapi.org/v2/top-headlines?sources=financial-post&apiKey=e439238bd7bc4cde8d2937a0178554b0"
 		result = requests.get(fp_url).json()
 
 		#print(result);
