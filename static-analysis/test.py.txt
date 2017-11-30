@@ -1,0 +1,305 @@
+************* Module test
+W: 14, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 15, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 16, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 17, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 18, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 20, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 21, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 22, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 26, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 27, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 28, 0: Wrong hanging indentation (add 17 spaces).
+			'/register',
+   ^                | (bad-continuation)
+C: 29, 0: Wrong hanging indentation (add 17 spaces).
+			data=dict(username=username, password=password, confirmPassword=confirmPassword),
+   ^                | (bad-continuation)
+C: 30, 0: Wrong hanging indentation (add 17 spaces).
+			follow_redirects=True
+   ^                | (bad-continuation)
+C: 31, 0: Wrong hanging indentation.
+		)
+  ^             |   | (bad-continuation)
+W: 33, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 34, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 35, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 37, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 38, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 39, 0: Line too long (107/100) (line-too-long)
+W: 39, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 40, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 42, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 43, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 44, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 45, 0: Line too long (108/100) (line-too-long)
+W: 45, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 46, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 48, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 49, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 51, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 52, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 53, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 54, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 56, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 57, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 58, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 59, 0: Line too long (113/100) (line-too-long)
+W: 59, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 60, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 62, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 63, 0: Line too long (101/100) (line-too-long)
+W: 63, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 63, 0: No space allowed around keyword argument assignment
+		return self.app.post('/add_stock', data=dict(name = name, ticker=ticker, shares=shares, cost=cost))
+                                                    ^ (bad-whitespace)
+W: 65, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 66, 0: Trailing whitespace (trailing-whitespace)
+W: 67, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 68, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 69, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 70, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 71, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 71, 0: Exactly one space required after comma
+		self.assertEqual(response_1.status_code,302)
+                                         ^ (bad-whitespace)
+W: 72, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 72, 0: Exactly one space required after comma
+		self.assertEqual(response_2.status_code,302)
+                                         ^ (bad-whitespace)
+W: 73, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 74, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 75, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 77, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 78, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 79, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 80, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 81, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 82, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 84, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 85, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 86, 0: Trailing whitespace (trailing-whitespace)
+W: 87, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 88, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 89, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 90, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 91, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 91, 0: Exactly one space required after comma
+		self.assertEqual(response_1.status_code,302)
+                                         ^ (bad-whitespace)
+W: 93, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 94, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 94, 0: Exactly one space required after comma
+		self.assertEqual(response_2.status_code,200)
+                                         ^ (bad-whitespace)
+W: 95, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 96, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 98, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 99, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:100, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:101, 0: Line too long (1363/100) (line-too-long)
+W:101, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:102, 0: Line too long (112/100) (line-too-long)
+W:102, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:103, 0: Wrong continued indentation (add 6 spaces).
+				  {'date':'2016-11-11', 'Open':778.81, 'Low':728.90, 'High':729.80, 'Close':739.01, 'Volume':6622784}]
+      ^     | (bad-continuation)
+C:103, 0: Line too long (106/100) (line-too-long)
+W:104, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:105, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:106, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:107, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:107, 0: Exactly one space required after comma
+		self.assertEqual(response.status_code,200)
+                                       ^ (bad-whitespace)
+W:109, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:110, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:112, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:113, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:114, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:115, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:116, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:129, 0: Trailing whitespace (trailing-whitespace)
+C:  1, 0: Missing module docstring (missing-docstring)
+W:  2, 0: Wildcard import server (wildcard-import)
+C: 13, 0: Missing class docstring (missing-docstring)
+C: 26, 1: Invalid argument name "confirmPassword" (invalid-name)
+C: 26, 1: Missing method docstring (missing-docstring)
+C: 33, 1: Missing method docstring (missing-docstring)
+C: 37, 1: Missing method docstring (missing-docstring)
+C: 42, 1: Missing method docstring (missing-docstring)
+C: 48, 1: Missing method docstring (missing-docstring)
+C: 51, 1: Missing method docstring (missing-docstring)
+C: 56, 1: Missing method docstring (missing-docstring)
+C: 62, 1: Missing method docstring (missing-docstring)
+C: 65, 1: Missing method docstring (missing-docstring)
+C: 87, 1: Missing method docstring (missing-docstring)
+C:100, 1: Missing method docstring (missing-docstring)
+C:109, 1: Missing method docstring (missing-docstring)
+C:112, 1: Missing method docstring (missing-docstring)
+W:  1, 0: Unused import pytest (unused-import)
+W:  2, 0: Unused import has_capital from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Flask from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import MongoClient from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import abort from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import output_file from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import requests from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import jsonify from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import login from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import global_id from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import flash from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_special from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import render_template from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import url_for from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import logout from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import sys from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import register from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import games from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import bcrypt from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_lower from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import stock_info from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import join_group from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import add_stock from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import create_group from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import index from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_nums from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import home from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import re from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import create_account from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import leaderboard from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import session from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import components from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import check_date_overlap from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import add_admin from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import search from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import json from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import add_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import show from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import datetime from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import figure from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Spectral11 from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import updater from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import PyMongo from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import id_of_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import redirect from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import request from wildcard import (unused-wildcard-import)
+W:  6, 0: Unused import flask_pymongo (unused-import)
+C:  3, 0: external import "import pandas" comes before "from server import *" (wrong-import-order)
+C:  4, 0: standard import "import unittest" comes before "import pytest" (wrong-import-order)
+C:  5, 0: standard import "from unittest.mock import patch" comes before "import pytest" (wrong-import-order)
+C:  6, 0: external import "import flask_pymongo" comes before "from server import *" (wrong-import-order)
+
+
+Report
+======
+84 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |15     |NC         |NC         |13.33       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    flask_pymongo (test)
+    pandas (test)
+    pytest (test)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |92     |70.23 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |1      |0.76  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |5      |3.82  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |33     |25.19 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |41     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |127    |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------------------+------------+
+|message id             |occurrences |
++=======================+============+
+|mixed-indentation      |78          |
++-----------------------+------------+
+|unused-wildcard-import |46          |
++-----------------------+------------+
+|missing-docstring      |15          |
++-----------------------+------------+
+|line-too-long          |7           |
++-----------------------+------------+
+|bad-whitespace         |6           |
++-----------------------+------------+
+|bad-continuation       |5           |
++-----------------------+------------+
+|wrong-import-order     |4           |
++-----------------------+------------+
+|trailing-whitespace    |3           |
++-----------------------+------------+
+|unused-import          |2           |
++-----------------------+------------+
+|wildcard-import        |1           |
++-----------------------+------------+
+|invalid-name           |1           |
++-----------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -10.00/10
