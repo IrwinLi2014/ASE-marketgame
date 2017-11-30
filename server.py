@@ -241,10 +241,10 @@ def search():
 	group = groups.find_one({"name": login_user["group"]})
 	current_holdings = 0
 	max_shares = 0
-    money = 0
-    if in_game:
-        max_shares = group["money"] // close_price
-        money = group["money"]
+	money = 0
+	if in_game:
+		max_shares = group["money"] // close_price
+		money = group["money"]
 	for stock in stocks:
 		if stock["ticker"] == ticker:
 			current_holdings = stock["shares"]
@@ -340,10 +340,7 @@ def add_stock():
 				}
 			}
 		)
-		users.update_one(
-			{'name': name},
-			{'$set': {'money': current["money"] - close_price * int(shares)}}
-		)
+		
 
 	else:
 		new_shares = existing_stock["shares"] + shares
@@ -355,12 +352,6 @@ def add_stock():
 					}
 				}
 			)
-
-			users.update_one(
-				{'name': name},
-				{'$set': {'money': current["money"] - close_price * int(shares)}}
-			)
-
 		else:
 			new_cost = close_price * shares + existing_stock["cost"]
 			users.update(
@@ -368,12 +359,15 @@ def add_stock():
 				{ '$set': {
 					'stocks.$.shares': new_shares,
 					'stocks.$.cost': new_cost,
-					'money': current["money"] - close_price * int(shares)
 					}
 				}
 			)
 
 	if (request.form["games"] == "true"):
+		users.update_one(
+			{'name': name},
+			{'$set': {'money': current["money"] - close_price * int(shares)}}
+		)
 		return redirect(url_for("games"))
 	return redirect(url_for("profile"))
 
