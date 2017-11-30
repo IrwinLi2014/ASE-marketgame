@@ -241,8 +241,10 @@ def search():
 	group = groups.find_one({"name": login_user["group"]})
 	current_holdings = 0
 	max_shares = 0
+    money = 0
     if in_game:
         max_shares = group["money"] // close_price
+        money = group["money"]
 	for stock in stocks:
 		if stock["ticker"] == ticker:
 			current_holdings = stock["shares"]
@@ -276,7 +278,7 @@ def search():
                            div = div,
                            current_holdings = current_holdings,
                            max_shares = max_shares,
-                           money=group["money"],
+                           money=money,
                            in_game=in_game)
 		
 	# except Exception as e:
