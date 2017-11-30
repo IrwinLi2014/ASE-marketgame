@@ -44,6 +44,7 @@ def create_account():
 @app.route("/home", methods=["GET"])
 def home():
 	if "user" in session:
+
 		r = requests.get("https://finance.yahoo.com/gainers?offset=0&count=25")
 		tickers = re.findall("<a href=\"/quote/(.+?)\?", r.text)
 		
@@ -80,9 +81,25 @@ def home():
 
 			except:
 				continue
+    fp_url = "https://newsapi.org/v2/top-headlines?sources=financial-post&apiKey=e439238bd7bc4cde8d2937a0178554b0"
+		result = requests.get(fp_url).json()
 
-		return render_template("home.html", user=session["user"], stocks = stocks)
+		#print(result);
+		news_links = []
+		img_links = []
 
+		links=[]
+		for x in result['articles']:
+			links.append((x['url'],x['urlToImage'],x['title']))
+			#print(x['title']);
+			#news_links.append(x['url'])
+			#img_links.append(x['urlToImage'])
+
+		#print(links)
+		links=links[0:4]
+		#news_links = news_links[0:4]
+		#img_links = img_links[0:4]
+		return render_template("home.html", user=session["user"], stocks = stocks, links=links)
 	return redirect(url_for("index"))
 
 

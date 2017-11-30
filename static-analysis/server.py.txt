@@ -1,0 +1,690 @@
+************* Module server
+C:  7, 0: Trailing whitespace (trailing-whitespace)
+W: 34, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 41, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 47, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 48, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 49, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 54, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 57, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 60, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 63, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 67, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 68, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 70, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 71, 0: Trailing whitespace (trailing-whitespace)
+W: 71, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 72, 0: Wrong continued indentation (add 1 space).
+     has_special(request.form['password']) +
+    ^| (bad-continuation)
+C: 73, 0: Wrong continued indentation (add 1 space).
+     has_capital(request.form['password']) +
+    ^| (bad-continuation)
+C: 74, 0: Wrong continued indentation (add 1 space).
+     has_lower(request.form['password'])) < 3:
+    ^| (bad-continuation)
+W: 75, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 77, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 78, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 79, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 80, 0: Line too long (118/100) (line-too-long)
+W: 80, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 81, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 82, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 83, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 84, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 86, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 92, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 93, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 95, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 96, 0: Line too long (111/100) (line-too-long)
+W: 96, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 97, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 98, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:100, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:106, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:107, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:114, 0: Trailing whitespace (trailing-whitespace)
+C:116, 0: Line too long (144/100) (line-too-long)
+W:116, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:117, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:118, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:119, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:120, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:121, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:122, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:124, 0: Line too long (124/100) (line-too-long)
+W:124, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:125, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:126, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:127, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:128, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:129, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:130, 0: Line too long (128/100) (line-too-long)
+W:130, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:130, 0: No space allowed around keyword argument assignment
+  ordered_daily_time_series = sorted(daily_time_series.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+                                                                   ^ (bad-whitespace)
+C:130, 0: Exactly one space required after :
+  ordered_daily_time_series = sorted(daily_time_series.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+                                                                             ^ (bad-whitespace)
+W:131, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:132, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:132, 0: No space allowed after bracket
+  previous_close_price = float(previous_day[1][ "4. close"])
+                                             ^ (bad-whitespace)
+W:134, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:135, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:136, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:137, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:138, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:140, 0: Line too long (145/100) (line-too-long)
+W:140, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:141, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:142, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:143, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:144, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:145, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:146, 0: Line too long (165/100) (line-too-long)
+C:147, 0: Line too long (138/100) (line-too-long)
+W:147, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:147, 0: No space allowed around keyword argument assignment
+  ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+                                                                             ^ (bad-whitespace)
+C:147, 0: Exactly one space required after :
+  ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+                                                                                       ^ (bad-whitespace)
+C:148, 0: Line too long (116/100) (line-too-long)
+W:148, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:152, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:153, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:154, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:157, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:158, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:160, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:162, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:163, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:164, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:165, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:167, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:168, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:170, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:172, 0: Trailing whitespace (trailing-whitespace)
+W:173, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:174, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:175, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:176, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:177, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:178, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:179, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:180, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:182, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:183, 0: Trailing whitespace (trailing-whitespace)
+W:183, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:184, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:185, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:187, 0: Line too long (193/100) (line-too-long)
+W:187, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:187, 0: No space allowed around keyword argument assignment
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+                                                                   ^ (bad-whitespace)
+C:187, 0: No space allowed around keyword argument assignment
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+                                                                                                    ^ (bad-whitespace)
+C:187, 0: No space allowed around keyword argument assignment
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+                                                                                                                                     ^ (bad-whitespace)
+C:187, 0: No space allowed around keyword argument assignment
+    return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+                                                                                                                                                                         ^ (bad-whitespace)
+W:189, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:190, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:201, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:203, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:206, 0: Line too long (104/100) (line-too-long)
+W:206, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:207, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:209, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:210, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:211, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:212, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:213, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:214, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:215, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:217, 0: Line too long (133/100) (line-too-long)
+C:218, 0: Line too long (107/100) (line-too-long)
+W:218, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:219, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:221, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:222, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:223, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:224, 0: Line too long (118/100) (line-too-long)
+W:224, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:225, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:226, 0: Line too long (120/100) (line-too-long)
+W:226, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:227, 0: Trailing whitespace (trailing-whitespace)
+W:229, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:232, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:233, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:234, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:235, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:236, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:237, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:238, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:239, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:242, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:243, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:245, 0: Line too long (202/100) (line-too-long)
+W:246, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:247, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:249, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:251, 0: Line too long (106/100) (line-too-long)
+W:251, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:252, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:252, 0: No space allowed around keyword argument assignment
+    p.line(x = x_date, y = y_close, line_width = 2)
+           ^ (bad-whitespace)
+C:252, 0: No space allowed around keyword argument assignment
+    p.line(x = x_date, y = y_close, line_width = 2)
+                       ^ (bad-whitespace)
+C:252, 0: No space allowed around keyword argument assignment
+    p.line(x = x_date, y = y_close, line_width = 2)
+                                             ^ (bad-whitespace)
+W:254, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:256, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:257, 0: Wrong continued indentation (remove 6 spaces).
+                               ticker = ticker,
+                         |     ^ (bad-continuation)
+C:257, 0: No space allowed around keyword argument assignment
+                               ticker = ticker,
+                                      ^ (bad-whitespace)
+C:258, 0: Wrong continued indentation (remove 6 spaces).
+                               close_price = close_price,
+                         |     ^ (bad-continuation)
+C:258, 0: No space allowed around keyword argument assignment
+                               close_price = close_price,
+                                           ^ (bad-whitespace)
+C:259, 0: Wrong continued indentation (remove 6 spaces).
+                               previous_close_price = previous_close_price,
+                         |     ^ (bad-continuation)
+C:259, 0: No space allowed around keyword argument assignment
+                               previous_close_price = previous_close_price,
+                                                    ^ (bad-whitespace)
+C:260, 0: Wrong continued indentation (remove 6 spaces).
+                               price_change_str = price_change_str,
+                         |     ^ (bad-continuation)
+C:260, 0: No space allowed around keyword argument assignment
+                               price_change_str = price_change_str,
+                                                ^ (bad-whitespace)
+C:261, 0: Wrong continued indentation (remove 6 spaces).
+                               open_price = open_price,
+                         |     ^ (bad-continuation)
+C:261, 0: No space allowed around keyword argument assignment
+                               open_price = open_price,
+                                          ^ (bad-whitespace)
+C:262, 0: Wrong continued indentation (remove 6 spaces).
+                               low_price = low_price,
+                         |     ^ (bad-continuation)
+C:262, 0: No space allowed around keyword argument assignment
+                               low_price = low_price,
+                                         ^ (bad-whitespace)
+C:263, 0: Wrong continued indentation (remove 6 spaces).
+                               high_price = high_price,
+                         |     ^ (bad-continuation)
+C:263, 0: No space allowed around keyword argument assignment
+                               high_price = high_price,
+                                          ^ (bad-whitespace)
+C:264, 0: Wrong continued indentation (remove 6 spaces).
+                               volume = volume_str,
+                         |     ^ (bad-continuation)
+C:264, 0: No space allowed around keyword argument assignment
+                               volume = volume_str,
+                                      ^ (bad-whitespace)
+C:265, 0: Wrong continued indentation (remove 6 spaces).
+                               name = name,
+                         |     ^ (bad-continuation)
+C:265, 0: No space allowed around keyword argument assignment
+                               name = name,
+                                    ^ (bad-whitespace)
+C:266, 0: Wrong continued indentation (remove 6 spaces).
+                               script = script,
+                         |     ^ (bad-continuation)
+C:266, 0: No space allowed around keyword argument assignment
+                               script = script,
+                                      ^ (bad-whitespace)
+C:267, 0: Wrong continued indentation (remove 6 spaces).
+                               div = div,
+                         |     ^ (bad-continuation)
+C:267, 0: No space allowed around keyword argument assignment
+                               div = div,
+                                   ^ (bad-whitespace)
+C:268, 0: Wrong continued indentation (remove 6 spaces).
+                               current_holdings = current_holdings,
+                         |     ^ (bad-continuation)
+C:268, 0: No space allowed around keyword argument assignment
+                               current_holdings = current_holdings,
+                                                ^ (bad-whitespace)
+C:269, 0: Wrong continued indentation (remove 6 spaces).
+                               in_game=in_game)
+                         |     ^ (bad-continuation)
+C:270, 0: Trailing whitespace (trailing-whitespace)
+W:271, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:272, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:273, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:280, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:281, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:282, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:285, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:288, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:289, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:290, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:291, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:293, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:294, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:295, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:296, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:297, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:299, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:300, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:301, 0: Wrong hanging indentation (add 17 spaces).
+      { 'name' : session["user"] },
+   ^                | (bad-continuation)
+C:301, 0: No space allowed after bracket
+      { 'name' : session["user"] },
+   ^ (bad-whitespace)
+C:301, 0: No space allowed before bracket
+      { 'name' : session["user"] },
+                              ^ (bad-whitespace)
+C:302, 0: Wrong hanging indentation (add 17 spaces).
+      {'$push': {
+   ^                | (bad-continuation)
+C:303, 0: Wrong hanging indentation (add 24 spaces).
+        'stocks': {
+    ^                       | (bad-continuation)
+C:304, 0: Wrong hanging indentation (add 31 spaces).
+          'name': request.form['name'],
+     ^                              | (bad-continuation)
+C:305, 0: Wrong hanging indentation (add 31 spaces).
+          'ticker': ticker,
+     ^                              | (bad-continuation)
+C:306, 0: Wrong hanging indentation (add 31 spaces).
+          'price': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:307, 0: Wrong hanging indentation (add 31 spaces).
+          'change': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:308, 0: Wrong hanging indentation (add 31 spaces).
+          'change_percentage': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:309, 0: Wrong hanging indentation (add 31 spaces).
+          'shares': int(shares),
+     ^                              | (bad-continuation)
+C:310, 0: Wrong hanging indentation (add 31 spaces).
+          'cost': close_price * int(shares),
+     ^                              | (bad-continuation)
+C:311, 0: Wrong hanging indentation (add 31 spaces).
+          'market_value': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:312, 0: Wrong hanging indentation (add 31 spaces).
+          'gain': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:313, 0: Wrong hanging indentation (add 31 spaces).
+          'gain_percentage': 0.0, #placeholder
+     ^                              | (bad-continuation)
+C:314, 0: Wrong hanging indentation.
+          }
+     ^                          |   | (bad-continuation)
+C:315, 0: Wrong hanging indentation.
+        }
+    ^                   |   | (bad-continuation)
+C:317, 0: Wrong hanging indentation.
+    )
+  ^             |   | (bad-continuation)
+W:319, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:320, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:321, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:322, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:323, 0: Wrong hanging indentation (add 24 spaces).
+        { 'name': session["user"], 'stocks.ticker': ticker },
+    ^                       | (bad-continuation)
+C:323, 0: No space allowed after bracket
+        { 'name': session["user"], 'stocks.ticker': ticker },
+    ^ (bad-whitespace)
+C:323, 0: No space allowed before bracket
+        { 'name': session["user"], 'stocks.ticker': ticker },
+                                                       ^ (bad-whitespace)
+C:324, 0: Wrong hanging indentation (add 24 spaces).
+        { '$pull': { 
+    ^                       | (bad-continuation)
+C:324, 0: Trailing whitespace (trailing-whitespace)
+C:324, 0: No space allowed after bracket
+        { '$pull': { 
+    ^ (bad-whitespace)
+C:325, 0: Wrong hanging indentation (add 31 spaces).
+          'stocks': {'ticker': ticker }
+     ^                              | (bad-continuation)
+C:325, 0: No space allowed before bracket
+          'stocks': {'ticker': ticker }
+                                 ^ (bad-whitespace)
+C:326, 0: Wrong hanging indentation.
+          }
+     ^                          |   | (bad-continuation)
+C:328, 0: Wrong hanging indentation.
+      )
+   ^                    |   | (bad-continuation)
+W:330, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:331, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:332, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:333, 0: Wrong hanging indentation (add 24 spaces).
+        { 'name': session["user"], 'stocks.ticker': ticker },
+    ^                       | (bad-continuation)
+C:333, 0: No space allowed after bracket
+        { 'name': session["user"], 'stocks.ticker': ticker },
+    ^ (bad-whitespace)
+C:333, 0: No space allowed before bracket
+        { 'name': session["user"], 'stocks.ticker': ticker },
+                                                       ^ (bad-whitespace)
+C:334, 0: Wrong hanging indentation (add 24 spaces).
+        { '$set': {
+    ^                       | (bad-continuation)
+C:334, 0: No space allowed after bracket
+        { '$set': {
+    ^ (bad-whitespace)
+C:335, 0: Wrong hanging indentation (add 31 spaces).
+          'stocks.$.shares': new_shares,
+     ^                              | (bad-continuation)
+C:336, 0: Wrong hanging indentation (add 31 spaces).
+          'stocks.$.cost': new_cost,
+     ^                              | (bad-continuation)
+C:337, 0: Wrong hanging indentation.
+          }
+     ^                          |   | (bad-continuation)
+C:339, 0: Wrong hanging indentation.
+      )
+   ^                    |   | (bad-continuation)
+W:341, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:356, 0: Trailing whitespace (trailing-whitespace)
+C:373, 0: Line too long (157/100) (line-too-long)
+C:373, 0: No space allowed around keyword argument assignment
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+                                                                              ^ (bad-whitespace)
+C:373, 0: No space allowed around keyword argument assignment
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+                                                                                                        ^ (bad-whitespace)
+C:373, 0: No space allowed around keyword argument assignment
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+                                                                                                                          ^ (bad-whitespace)
+C:373, 0: No space allowed around keyword argument assignment
+                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+                                                                                                                                                       ^ (bad-whitespace)
+C:378, 0: Trailing whitespace (trailing-whitespace)
+C:401, 0: Line too long (116/100) (line-too-long)
+C:401, 0: No space allowed around keyword argument assignment
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+                                                       ^ (bad-whitespace)
+C:401, 0: No space allowed around keyword argument assignment
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+                                                                            ^ (bad-whitespace)
+C:401, 0: No space allowed around keyword argument assignment
+            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+                                                                                                        ^ (bad-whitespace)
+C:411, 0: Exactly one space required around assignment
+        id+=1
+          ^^ (bad-whitespace)
+C:426, 0: No space allowed around keyword argument assignment
+        return render_template("admin.html", registration_error = True)
+                                                                ^ (bad-whitespace)
+C:428, 0: No space allowed around keyword argument assignment
+        return render_template("admin.html", game_error = True)
+                                                        ^ (bad-whitespace)
+C:430, 0: No space allowed around keyword argument assignment
+        return render_template("admin.html", reg_game_error = True)
+                                                            ^ (bad-whitespace)
+C:432, 0: No space allowed around keyword argument assignment
+        return render_template("admin.html", cur_reg_error = True)
+                                                           ^ (bad-whitespace)
+C:434, 0: No space allowed around keyword argument assignment
+        return render_template("admin.html", cur_game_error = True)
+                                                            ^ (bad-whitespace)
+C:439, 0: Line too long (120/100) (line-too-long)
+C:440, 0: Line too long (134/100) (line-too-long)
+C:442, 0: No space allowed around keyword argument assignment
+            return render_template("admin.html", game_overlap = True)
+                                                              ^ (bad-whitespace)
+C:444, 0: No space allowed around keyword argument assignment
+            return render_template("admin.html", registration_overlap = True)
+                                                                      ^ (bad-whitespace)
+C:454, 0: No space allowed around keyword argument assignment
+    return render_template("game_creation.html", error = True)
+                                                       ^ (bad-whitespace)
+C:476, 0: Wrong hanging indentation (remove 8 spaces).
+                { 'name': group_name},
+        |       ^ (bad-continuation)
+C:476, 0: No space allowed after bracket
+                { 'name': group_name},
+                ^ (bad-whitespace)
+C:477, 0: Wrong hanging indentation (remove 8 spaces).
+                { '$push': {
+        |       ^ (bad-continuation)
+C:477, 0: No space allowed after bracket
+                { '$push': {
+                ^ (bad-whitespace)
+C:481, 0: Wrong hanging indentation.
+            )
+    |   |   ^ (bad-continuation)
+C:486, 0: Line too long (153/100) (line-too-long)
+C:493, 0: Trailing whitespace (trailing-whitespace)
+C:515, 0: Line too long (119/100) (line-too-long)
+C:522, 0: Line too long (153/100) (line-too-long)
+W:538, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:539, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:  1, 0: Missing module docstring (missing-docstring)
+C: 22, 0: Invalid constant name "app" (invalid-name)
+C: 27, 0: Invalid constant name "mongo" (invalid-name)
+C: 29, 0: Invalid constant name "global_id" (invalid-name)
+C: 33, 0: Missing function docstring (missing-docstring)
+C: 40, 0: Missing function docstring (missing-docstring)
+C: 46, 0: Missing function docstring (missing-docstring)
+C: 53, 0: Invalid argument name "s" (invalid-name)
+C: 53, 0: Missing function docstring (missing-docstring)
+C: 56, 0: Invalid argument name "s" (invalid-name)
+C: 56, 0: Missing function docstring (missing-docstring)
+C: 59, 0: Invalid argument name "s" (invalid-name)
+C: 59, 0: Missing function docstring (missing-docstring)
+C: 62, 0: Invalid argument name "s" (invalid-name)
+C: 62, 0: Missing function docstring (missing-docstring)
+C: 66, 0: Missing function docstring (missing-docstring)
+C: 91, 0: Missing function docstring (missing-docstring)
+C:105, 0: Missing function docstring (missing-docstring)
+C:113, 0: Missing function docstring (missing-docstring)
+R:113, 0: Too many local variables (18/15) (too-many-locals)
+C:151, 0: Missing function docstring (missing-docstring)
+W:189, 1: No exception type(s) specified (bare-except)
+W:170,42: Unused variable 'rest' (unused-variable)
+W:198,-1: String statement has no effect (pointless-string-statement)
+C:200, 0: Missing function docstring (missing-docstring)
+R:200, 0: Too many local variables (30/15) (too-many-locals)
+W:271, 8: Catching too general exception Exception (broad-except)
+C:210, 6: Invalid variable name "x" (invalid-name)
+C:214, 5: Comparison to False should be 'not expr' or 'expr is False' (singleton-comparison)
+C:251, 2: Invalid variable name "p" (invalid-name)
+C:271, 1: Invalid variable name "e" (invalid-name)
+C:278, 0: Missing function docstring (missing-docstring)
+W:364, 8: Redefining built-in 'id' (redefined-builtin)
+W:349, 4: Redefining name 'games' from outer scope (line 344) (redefined-outer-name)
+C:344, 0: Missing function docstring (missing-docstring)
+R:344, 0: Too many local variables (24/15) (too-many-locals)
+C:364, 8: Invalid variable name "id" (invalid-name)
+W:365, 8: Using the global statement (global-statement)
+C:365, 8: Invalid constant name "global_id" (invalid-name)
+W:406, 4: Redefining built-in 'id' (redefined-builtin)
+C:405, 0: Missing function docstring (missing-docstring)
+C:406, 4: Invalid variable name "id" (invalid-name)
+C:411, 8: Invalid variable name "id" (invalid-name)
+W:410, 8: Unused variable 'res' (unused-variable)
+C:414, 0: Missing function docstring (missing-docstring)
+W:422, 4: Redefining name 'games' from outer scope (line 344) (redefined-outer-name)
+C:419, 0: Missing function docstring (missing-docstring)
+C:441,11: Comparison to True should be just 'expr' or 'expr is True' (singleton-comparison)
+C:443,11: Comparison to True should be just 'expr' or 'expr is True' (singleton-comparison)
+R:419, 0: Too many return statements (8/6) (too-many-return-statements)
+C:457, 0: Missing function docstring (missing-docstring)
+W:484, 4: Redefining name 'games' from outer scope (line 344) (redefined-outer-name)
+C:470, 0: Missing function docstring (missing-docstring)
+W:498, 4: Redefining name 'games' from outer scope (line 344) (redefined-outer-name)
+C:495, 0: Missing function docstring (missing-docstring)
+C:532, 0: Missing function docstring (missing-docstring)
+W:535, 4: Unused variable 'ranked' (unused-variable)
+W:  1, 0: Unused jsonify imported from flask (unused-import)
+W:  1, 0: Unused flash imported from flask (unused-import)
+W:  1, 0: Unused abort imported from flask (unused-import)
+W:  3, 0: Unused MongoClient imported from flask_pymongo (unused-import)
+W:  5, 0: Unused show imported from bokeh.plotting (unused-import)
+W:  5, 0: Unused output_file imported from bokeh.plotting (unused-import)
+W:  6, 0: Unused Spectral11 imported from bokeh.palettes (unused-import)
+W: 13, 0: Unused import json (unused-import)
+W: 18, 0: Unused import sys (unused-import)
+C:  9, 0: standard import "from datetime import datetime" comes before "from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for" (wrong-import-order)
+C: 13, 0: standard import "import json" comes before "from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for" (wrong-import-order)
+C: 15, 0: standard import "import re" comes before "from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for" (wrong-import-order)
+C: 18, 0: standard import "import sys" comes before "from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, url_for" (wrong-import-order)
+
+
+Report
+======
+308 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |22     |22         |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    bcrypt (server)
+    bokeh 
+      \-embed (server)
+      \-palettes (server)
+      \-plotting (server)
+        \-figure (server)
+    flask (server)
+    flask_pymongo (server)
+    pandas (server)
+    pymongo (server)
+    requests (server)
+    updater (server)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |380    |70.24 |380      |=          |
++----------+-------+------+---------+-----------+
+|docstring |22     |4.07  |22       |=          |
++----------+-------+------+---------+-----------+
+|comment   |26     |4.81  |26       |=          |
++----------+-------+------+---------+-----------+
+|empty     |113    |20.89 |113      |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |176    |176      |=          |
++-----------+-------+---------+-----------+
+|refactor   |4      |4        |=          |
++-----------+-------+---------+-----------+
+|warning    |176    |176      |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++---------------------------+------------+
+|message id                 |occurrences |
++===========================+============+
+|mixed-indentation          |154         |
++---------------------------+------------+
+|bad-whitespace             |51          |
++---------------------------+------------+
+|bad-continuation           |46          |
++---------------------------+------------+
+|line-too-long              |24          |
++---------------------------+------------+
+|missing-docstring          |23          |
++---------------------------+------------+
+|invalid-name               |14          |
++---------------------------+------------+
+|trailing-whitespace        |11          |
++---------------------------+------------+
+|unused-import              |9           |
++---------------------------+------------+
+|wrong-import-order         |4           |
++---------------------------+------------+
+|redefined-outer-name       |4           |
++---------------------------+------------+
+|unused-variable            |3           |
++---------------------------+------------+
+|too-many-locals            |3           |
++---------------------------+------------+
+|singleton-comparison       |3           |
++---------------------------+------------+
+|redefined-builtin          |2           |
++---------------------------+------------+
+|too-many-return-statements |1           |
++---------------------------+------------+
+|pointless-string-statement |1           |
++---------------------------+------------+
+|global-statement           |1           |
++---------------------------+------------+
+|broad-except               |1           |
++---------------------------+------------+
+|bare-except                |1           |
++---------------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -1.56/10 (previous run: -1.56/10, +0.00)

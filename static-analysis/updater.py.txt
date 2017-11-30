@@ -1,0 +1,270 @@
+************* Module updater
+W: 17, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 18, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 19, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 20, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 23, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 24, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 25, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 26, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 27, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 28, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 29, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 30, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 31, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 33, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 36, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 37, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 39, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 40, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 41, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 43, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 44, 0: Wrong hanging indentation (add 15 spaces).
+					"ticker": ticker,
+     ^              | (bad-continuation)
+C: 45, 0: Wrong hanging indentation (add 15 spaces).
+					"price": price,
+     ^              | (bad-continuation)
+C: 46, 0: Wrong hanging indentation (add 15 spaces).
+					"low_price": low,
+     ^              | (bad-continuation)
+C: 47, 0: Wrong hanging indentation (add 15 spaces).
+					"high_price": high,
+     ^              | (bad-continuation)
+C: 48, 0: Wrong hanging indentation (add 15 spaces).
+					"open_price": open_price,
+     ^              | (bad-continuation)
+C: 49, 0: Wrong hanging indentation (add 15 spaces).
+					"close_price": close_price,
+     ^              | (bad-continuation)
+C: 50, 0: Wrong hanging indentation (add 15 spaces).
+					"volume": volume
+     ^              | (bad-continuation)
+C: 51, 0: Wrong hanging indentation.
+		})
+  ^             |   | (bad-continuation)
+W: 54, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 55, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 56, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 56, 0: Exactly one space required after assignment
+	info =  db.stocks.find_one({"ticker": ticker})
+      ^ (bad-whitespace)
+W: 59, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 60, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 61, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 62, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 64, 0: Line too long (117/100) (line-too-long)
+W: 64, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 67, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 68, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 71, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 72, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 73, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 74, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 77, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C: 78, 0: Wrong hanging indentation (add 17 spaces).
+			{"ticker": stock["ticker"]},
+   ^                | (bad-continuation)
+C: 79, 0: Wrong hanging indentation (add 17 spaces).
+			{"$set": {
+   ^                | (bad-continuation)
+C: 80, 0: Wrong hanging indentation (add 23 spaces).
+					"price": price,
+     ^                      | (bad-continuation)
+C: 81, 0: Wrong hanging indentation (add 23 spaces).
+					"low_price": low,
+     ^                      | (bad-continuation)
+C: 82, 0: Wrong hanging indentation (add 23 spaces).
+					"high_price": high,
+     ^                      | (bad-continuation)
+C: 83, 0: Wrong hanging indentation (add 23 spaces).
+					"open_price": open_price,
+     ^                      | (bad-continuation)
+C: 84, 0: Wrong hanging indentation (add 23 spaces).
+					"close_price": close_price,
+     ^                      | (bad-continuation)
+C: 85, 0: Wrong hanging indentation (add 23 spaces).
+					"volume": volume
+     ^                      | (bad-continuation)
+C: 86, 0: Wrong hanging indentation.
+				}
+    ^                   |   | (bad-continuation)
+C: 88, 0: Wrong hanging indentation.
+		)
+  ^             |   | (bad-continuation)
+W: 91, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W: 95, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:100, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:101, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:102, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:103, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:104, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:105, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:106, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:107, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:108, 0: Wrong continued indentation (add 10 spaces).
+					float(cells[1].text.replace(',', '')),
+     ^         | (bad-continuation)
+C:109, 0: Wrong continued indentation (add 10 spaces).
+					float(cells[2].text.replace(',', '')),
+     ^         | (bad-continuation)
+C:110, 0: Wrong continued indentation (add 10 spaces).
+					float(cells[3].text.replace(',', '')),
+     ^         | (bad-continuation)
+C:111, 0: Wrong continued indentation (add 10 spaces).
+					float(cells[4].text.replace(',', '')),
+     ^         | (bad-continuation)
+C:112, 0: Wrong continued indentation (add 10 spaces).
+					float(cells[5].text.replace(',', ''))
+     ^         | (bad-continuation)
+C:113, 0: Wrong continued indentation (add 10 spaces).
+				))
+    ^         | (bad-continuation)
+W:114, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:117, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:131, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:132, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:133, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:134, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:135, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:136, 0: Trailing whitespace (trailing-whitespace)
+W:193, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:194, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+W:195, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:198, 0: Final newline missing (missing-final-newline)
+W:198, 0: Found indentation with tabs instead of spaces (mixed-indentation)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  3, 0: Multiple imports on one line (sched, time) (multiple-imports)
+C: 16, 0: Missing function docstring (missing-docstring)
+C: 22, 0: Missing function docstring (missing-docstring)
+C: 35, 0: Missing function docstring (missing-docstring)
+C: 37, 1: Invalid variable name "db" (invalid-name)
+C: 40, 4: Comparison to None should be 'expr is None' (singleton-comparison)
+C: 53, 0: Missing function docstring (missing-docstring)
+C: 55, 1: Invalid variable name "db" (invalid-name)
+C: 59, 4: Comparison to None should be 'expr is None' (singleton-comparison)
+C: 66, 0: Invalid argument name "s" (invalid-name)
+C: 66, 0: Missing function docstring (missing-docstring)
+C: 68, 1: Invalid variable name "db" (invalid-name)
+C:191, 0: Missing function docstring (missing-docstring)
+C:193, 1: Invalid variable name "s" (invalid-name)
+W:  4, 0: Unused import re (unused-import)
+C:  3, 0: standard import "import sched, time" comes before "import requests" (wrong-import-order)
+C:  3, 0: standard import "import sched, time" comes before "import requests" (wrong-import-order)
+C:  4, 0: standard import "import re" comes before "import requests" (wrong-import-order)
+
+
+Report
+======
+68 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |8      |8          |=          |25.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    bs4 (updater)
+    pymongo (updater)
+    requests (updater)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |82     |41.00 |82       |=          |
++----------+-------+------+---------+-----------+
+|docstring |32     |16.00 |32       |=          |
++----------+-------+------+---------+-----------+
+|comment   |59     |29.50 |59       |=          |
++----------+-------+------+---------+-----------+
+|empty     |27     |13.50 |27       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |46     |46       |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |57     |57       |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++----------------------+------------+
+|message id            |occurrences |
++======================+============+
+|mixed-indentation     |56          |
++----------------------+------------+
+|bad-continuation      |24          |
++----------------------+------------+
+|missing-docstring     |7           |
++----------------------+------------+
+|invalid-name          |5           |
++----------------------+------------+
+|wrong-import-order    |3           |
++----------------------+------------+
+|singleton-comparison  |2           |
++----------------------+------------+
+|unused-import         |1           |
++----------------------+------------+
+|trailing-whitespace   |1           |
++----------------------+------------+
+|multiple-imports      |1           |
++----------------------+------------+
+|missing-final-newline |1           |
++----------------------+------------+
+|line-too-long         |1           |
++----------------------+------------+
+|bad-whitespace        |1           |
++----------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -5.15/10 (previous run: -5.15/10, +0.00)

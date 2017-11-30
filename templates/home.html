@@ -113,4 +113,22 @@
 
         </table>
 
+<div class="container">
+  <div class="row">
+    {% for l in links %}
+      <div class="col-md-3 news">
+          <div class="thumbnail">
+            <a href="{{ l[0] }}">
+              <img src="{{ l[1] }}" alt="img" style="width:100%">
+              <div class="caption">
+                <p> {{ l[2] }} </p>
+              </div>
+            </a>
+          </div>
+      </div>
+    {% endfor %}
+    
+  </div>
+</div>
+
 {% endblock %}
