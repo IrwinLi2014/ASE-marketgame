@@ -1,5 +1,18 @@
 {% extends "layout.html" %}
 
+{% block header %}
+    <script>
+        // $(document).ready(function () {
+        //     $("#game").click(function() {
+        //         var name = $("#name").val();
+        //         var ticker = 
+        //         alert(name);
+        //         $.post("/add_stock", {"game": true});
+        //     })
+        // })
+    </script>
+{% endblock %}
+
 {% block title %}Search{% endblock %}
 {% block nav %}
                 <li class="nav-item">
@@ -12,7 +25,7 @@
                   <a class="nav-link" href="{{ url_for('games') }}">Games</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('games') }}">Leaderboard</a>
+                  <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
                 </li>
 {% endblock %}
 {% block body %}
@@ -38,16 +51,34 @@
 
         <!--Form-->
         <div style = "width: 100%; clear: both">
-            <h4>Add Stock to Portfolio</h4>
+            {% if in_game %}
+            <h4>Free Cash:</h4>
+            <p>${{ '{0:.2f}'.format(money) }}</p>
+            <form method=POST action="{{ url_for('add_stock') }}">
+            <h4>Add Stock to Game Portfolio</h4>
+                <input type='hidden' name='name' value='{{ name }}'>
+                <input type='hidden' name='ticker' value='{{ ticker }}'>
+                <input type='hidden' name='close_price' value='{{ close_price }}'>
+                <input type='hidden' name='games' value=true>
+            
+                <label for='shares'>Shares</label>
+                <input type='number' min='{{ -current_holdings }}' max="{{ max_shares }}" step="1" name='shares' placeholder='number of shares' style="width: 173px">
+                
+                <button type='submit' class='btn btn-primary' id='game'>Submit</button>
+            </form> 
+            {% endif %}
+
+            <h4>Add Stock to Personal Portfolio</h4>
             <form method=POST action="{{ url_for('add_stock') }}">
                 <input type='hidden' name='name' value='{{ name }}'>
                 <input type='hidden' name='ticker' value='{{ ticker }}'>
                 <input type='hidden' name='close_price' value='{{ close_price }}'>
+                <input type='hidden' name='games' value=false>
             
                 <label for='shares'>Shares</label>
                 <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>
                 
-                <button type='submit' class='btn btn-primary'>Submit</button>
+                <button type='submit' class='btn btn-primary' id='personal'>Submit</button>
 
             </form>
         </div>

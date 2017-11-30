@@ -32,22 +32,32 @@
                 var ticker = document.createElement("input"); 
                 ticker.name = "ticker";
                 ticker.value = my_portfolio.rows[row_index].cells[1].innerHTML;
+                ticker.type='hidden';
                 form.appendChild(ticker);
 
                 var name = document.createElement("input"); 
                 name.name = "name"; 
                 name.value = my_portfolio.rows[row_index].cells[0].innerHTML;
+                name.type='hidden';
                 form.appendChild(name);
 
                 var close_price = document.createElement("input");
                 close_price.name = "close_price";
                 close_price.value = my_portfolio.rows[row_index].cells[2].innerHTML;
+                close_price.type='hidden';
                 form.appendChild(close_price);
 
                 var shares = document.createElement("input");
                 shares.name = "shares";
                 shares.value = new_shares - old_shares; //it should really just be new_shares but how add_stock works is new_shares <- new shares + old_shares
+                shares.type='hidden';
                 form.appendChild(shares);
+
+                var games = document.createElement("input");
+                games.name = "games";
+                games.value = false;
+                games.type='hidden';
+                form.appendChild(games);
 
                 document.body.appendChild(form);
 
@@ -77,7 +87,7 @@
                   <a class="nav-link" href="{{ url_for('games') }}">Games</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('games') }}">Leaderboard</a>
+                  <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
                 </li>
 
 {% endblock %}
@@ -87,6 +97,8 @@
 {% endblock %}
 
 {% block content %}
+        <!-- <h5>Cash Remaining: </h5>
+        <p id="money">{{ money }}</p> -->
         <table id='my_portfolio' class='table table-hover table-bordered table-condensed table-striped' border='1'>
     		<thead>
                 <th scope="col">Name</th>

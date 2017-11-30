@@ -9,3 +9,6 @@ Flask-PyMongo
 bcrypt
 bokeh==0.12.2
 simplejson
+lxml
+beautifulsoup4
+pymongo
