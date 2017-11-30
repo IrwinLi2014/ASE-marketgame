@@ -16,6 +16,7 @@ import re
 import requests
 #import simplejson as json
 import sys
+import updater
 
 
 app = Flask(__name__)
@@ -44,7 +45,7 @@ def create_account():
 @app.route("/home", methods=["GET"])
 def home():
 	if "user" in session:
-		return render_template("home.html")
+		return render_template("home.html", user=session["user"])
 	return redirect(url_for("index"))
 
 
@@ -76,7 +77,7 @@ def register():
 	if existing_user is None:
 		if request.form['password'] == request.form['confirmPassword']:
 			hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': [], 'admin': False})
+			users.insert({'name' : request.form['username'], 'password' : hashpass, 'stocks': [], 'admin': False, 'group': ''})
 			session['user'] = request.form['username']
 			return redirect(url_for("home"))
 		else:
@@ -146,8 +147,6 @@ def stock_info(ticker):
 	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
 	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
 
-
-
 @app.route("/profile", methods=["GET"])
 def profile():
 	try:
@@ -167,8 +166,9 @@ def profile():
 
 		for stock in stocks:
 			ticker = stock['ticker']
-			stock['price'], previous_close_price, *rest = stock_info(ticker)
-			previous_close_price = 40
+			# stock['price'], previous_close_price, *rest = stock_info(ticker)
+			stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
+			# previous_close_price = 40
 			
 			stock['change'] = stock['price'] - previous_close_price
 			stock['change_percentage'] = stock['change'] / stock['price'] * 100
@@ -214,7 +214,9 @@ def search():
 		if name_found == False:
 			return "ERROR: invalid ticker"
 
-		close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full = stock_info(ticker)
+		# close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full = stock_info(ticker)
+		close_price, previous_close_price, open_price, low_price, high_price, volume = updater.stock_info(ticker)
+		ordered_daily_time_series_full = updater.ordered_daily_time_series_full(ticker)
 
 		price_change = close_price - previous_close_price
 		price_change_percentage = (close_price - previous_close_price) / close_price * 100
@@ -223,11 +225,14 @@ def search():
 		else:
 			price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
 		
-		volume_str = "{:.2f}".format(volume / 10**6) + "M"
+		# volume_str = "{:.2f}".format(volume / 10**6) + "M"
+		volume_str = volume
 
 		#get current share holdings of stock
 		users = mongo.db.users
-		stocks = users.find_one({'name' : session["user"]})["stocks"]
+		login_user = users.find_one({'name' : session["user"]})
+		stocks = login_user["stocks"]
+		in_game = login_user["group"] != ""
 		current_holdings = 0
 		for stock in stocks:
 			if stock["ticker"] == ticker:
@@ -240,16 +245,31 @@ def search():
 		#ordered_daily_time_series_full is a list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
 		for day in ordered_daily_time_series_full:
 			x_date.append(pandas.to_datetime(day[0]))
-			y_close.append(float(day[1]['4. close']))
+			# y_close.append(float(day[1]['4. close']))
+			y_close.append(day[4])
 
 		p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='Date', x_axis_type='datetime')
 		p.line(x = x_date, y = y_close, line_width = 2)
 
 		script, div = components(p)
-	   
-		return render_template("search.html", ticker = ticker, close_price = close_price, previous_close_price = previous_close_price, price_change_str = price_change_str, open_price = open_price, low_price = low_price, high_price = high_price, volume = volume_str, name = name, script = script, div = div, current_holdings = current_holdings)
+
+		return render_template("search.html",
+                               ticker = ticker,
+                               close_price = close_price,
+                               previous_close_price = previous_close_price,
+                               price_change_str = price_change_str,
+                               open_price = open_price,
+                               low_price = low_price,
+                               high_price = high_price,
+                               volume = volume_str,
+                               name = name,
+                               script = script,
+                               div = div,
+                               current_holdings = current_holdings,
+                               in_game=in_game)
 		
-	except:
+	except Exception as e:
+		print(e)
 		return "ERROR: AlphaVantage server is overloaded"
 
 
@@ -260,6 +280,9 @@ def add_stock():
 	users = mongo.db.users
 	ticker = request.form['ticker']
 	close_price = float(request.form['close_price'])
+
+	# add stock to database
+	updater.add_stock(ticker, close_price)
 
 	#check for empty user input
 	if len(request.form['shares']) == 0:
@@ -461,6 +484,10 @@ def join_group():
     games = mongo.db.games
     cur_game = games.find_one({'id' : global_id})
     if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
+        users.update_one(
+            {"name": login_user["name"]},
+            {"$set": {"group": group_name}}
+        )
         return render_template("game.html", error=True)
     return render_template('not_game.html', error=True)
    
@@ -493,6 +520,10 @@ def create_group():
     # Check if the game is currently ongoing or not and determine which template to render
     cur_game = games.find_one({'id' : global_id})
     if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
+        users.update_one(
+            {"name": login_user["name"]},
+            {"$set": {"group": group_name}}
+        )
         return render_template("game.html", error=True)
     return render_template('not_game.html', error=True)
 
