@@ -198,88 +198,90 @@ def profile():
 '''
 @app.route("/search", methods=["POST"])
 def search():
-	try:
-		#convert ticker to all-caps
-		ticker = request.form['search'].upper()
+	# try:
+	#convert ticker to all-caps
+	ticker = request.form['search'].upper()
 
-		#verify that stock ticker exists
-		yahoo_url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
-		result = requests.get(yahoo_url).json()
+	#verify that stock ticker exists
+	yahoo_url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
+	result = requests.get(yahoo_url).json()
 
-		name_found = False
-		for x in result['ResultSet']['Result']:
-			if x['symbol'] == ticker:
-				name = x['name'] #get stock name from ticker
-				name_found = True
-		if name_found == False:
-			return "ERROR: invalid ticker"
+	name_found = False
+	for x in result['ResultSet']['Result']:
+		if x['symbol'] == ticker:
+			name = x['name'] #get stock name from ticker
+			name_found = True
+	if name_found == False:
+		return "ERROR: invalid ticker"
 
-		# close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full = stock_info(ticker)
-		close_price, previous_close_price, open_price, low_price, high_price, volume = updater.stock_info(ticker)
-		ordered_daily_time_series_full = updater.ordered_daily_time_series_full(ticker)
+	# close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full = stock_info(ticker)
+	close_price, previous_close_price, open_price, low_price, high_price, volume = updater.stock_info(ticker)
+	ordered_daily_time_series_full = updater.ordered_daily_time_series_full(ticker)
 
-		price_change = close_price - previous_close_price
-		price_change_percentage = (close_price - previous_close_price) / close_price * 100
-		if price_change > 0:
-			price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
-		else:
-			price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
+	price_change = close_price - previous_close_price
+	price_change_percentage = (close_price - previous_close_price) / close_price * 100
+	if price_change > 0:
+		price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
+	else:
+		price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
+	
+	# volume_str = "{:.2f}".format(volume / 10**6) + "M"
+	volume_str = volume
+
+	#get current share holdings of stock
+	users = mongo.db.users
+	login_user = users.find_one({'name' : session["user"]})
+	stocks = login_user["stocks"]
+
+	###########################
+	# TODO: RESET GROUP NAMES #
+	###########################
+	in_game = login_user["group"] != ""
+	groups = mongo.db.groups
+	group = groups.find_one({"name": login_user["group"]})
+	current_holdings = 0
+	max_shares = 0
+    if in_game:
+        max_shares = group["money"] // close_price
+	for stock in stocks:
+		if stock["ticker"] == ticker:
+			current_holdings = stock["shares"]
+
+	#create stock's closing price chart
+	x_date = []
+	y_close = []
+
+	#ordered_daily_time_series_full is a list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
+	for day in ordered_daily_time_series_full:
+		x_date.append(pandas.to_datetime(day[0]))
+		# y_close.append(float(day[1]['4. close']))
+		y_close.append(day[4])
+
+	p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='Date', x_axis_type='datetime')
+	p.line(x = x_date, y = y_close, line_width = 2)
+
+	script, div = components(p)
+
+	return render_template("search.html",
+                           ticker = ticker,
+                           close_price = close_price,
+                           previous_close_price = previous_close_price,
+                           price_change_str = price_change_str,
+                           open_price = open_price,
+                           low_price = low_price,
+                           high_price = high_price,
+                           volume = volume_str,
+                           name = name,
+                           script = script,
+                           div = div,
+                           current_holdings = current_holdings,
+                           max_shares = max_shares,
+                           money=group["money"],
+                           in_game=in_game)
 		
-		# volume_str = "{:.2f}".format(volume / 10**6) + "M"
-		volume_str = volume
-
-		#get current share holdings of stock
-		users = mongo.db.users
-		login_user = users.find_one({'name' : session["user"]})
-		stocks = login_user["stocks"]
-
-		###########################
-		# TODO: RESET GROUP NAMES #
-		###########################
-		in_game = login_user["group"] != ""
-		groups = mongo.db.groups
-		group = groups.find_one({"name": login_user["group"]})
-		current_holdings = 0
-		max_shares = group["money"] // close_price
-		for stock in stocks:
-			if stock["ticker"] == ticker:
-				current_holdings = stock["shares"]
-
-		#create stock's closing price chart
-		x_date = []
-		y_close = []
-
-		#ordered_daily_time_series_full is a list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
-		for day in ordered_daily_time_series_full:
-			x_date.append(pandas.to_datetime(day[0]))
-			# y_close.append(float(day[1]['4. close']))
-			y_close.append(day[4])
-
-		p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='Date', x_axis_type='datetime')
-		p.line(x = x_date, y = y_close, line_width = 2)
-
-		script, div = components(p)
-
-		return render_template("search.html",
-                               ticker = ticker,
-                               close_price = close_price,
-                               previous_close_price = previous_close_price,
-                               price_change_str = price_change_str,
-                               open_price = open_price,
-                               low_price = low_price,
-                               high_price = high_price,
-                               volume = volume_str,
-                               name = name,
-                               script = script,
-                               div = div,
-                               current_holdings = current_holdings,
-                               max_shares = max_shares,
-                               money=group["money"],
-                               in_game=in_game)
-		
-	except Exception as e:
-		print(e)
-		return "ERROR: AlphaVantage server is overloaded"
+	# except Exception as e:
+	# 	print(e)
+	# 	return "ERROR: AlphaVantage server is overloaded"
 
 
 
