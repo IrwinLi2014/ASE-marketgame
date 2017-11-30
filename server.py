@@ -147,6 +147,8 @@ def stock_info(ticker):
 	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
 	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
 
+
+
 @app.route("/profile", methods=["GET"])
 def profile():
 	users = mongo.db.users
@@ -190,12 +192,6 @@ def profile():
 
 
 
-
-
-
-'''
-- change button if already got stock in portfolio
-'''
 @app.route("/search", methods=["POST"])
 def search():
 	# try:
