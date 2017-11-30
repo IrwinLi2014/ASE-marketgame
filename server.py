@@ -218,8 +218,10 @@ def search():
 	price_change_percentage = (close_price - previous_close_price) / close_price * 100
 	if price_change > 0:
 		price_change_str = '+$' + '{0:.2f}'.format(price_change) + ' (+' + '{0:.2f}'.format(price_change_percentage) + '%)'
-	else:
+	elif price_change < 0:
 		price_change_str = '-$' + '{0:.2f}'.format(-price_change) + ' (-' + '{0:.2f}'.format(-price_change_percentage) + '%)'
+	else: #price_change == 0
+		price_change_str = '$' + '{0:.2f}'.format(price_change) + ' (' + '{0:.2f}'.format(price_change_percentage) + '%)'
 	
 	# volume_str = "{:.2f}".format(volume / 10**6) + "M"
 	volume_str = volume
