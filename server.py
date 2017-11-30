@@ -41,12 +41,51 @@ def create_account():
 	return render_template("create_account.html")
 
 
-
 @app.route("/home", methods=["GET"])
 def home():
 	if "user" in session:
-		return render_template("home.html", user=session["user"])
+		r = requests.get("https://finance.yahoo.com/gainers?offset=0&count=25")
+		tickers = re.findall("<a href=\"/quote/(.+?)\?", r.text)
+		
+		stocks = [] #list of stock dictionaries
+		count = 0
+		for ticker in tickers:
+			if count >= 10:
+				break
+			try:
+				#get name
+				yahoo_url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(ticker)
+				result = requests.get(yahoo_url).json()
+				name_found = False
+				for x in result['ResultSet']['Result']:
+					if x['symbol'] == ticker:
+						name = x['name'] #get stock name from ticker
+						name_found = True
+				if name_found == False:
+					return "ERROR: invalid ticker"
+
+				#get other information
+				close_price, previous_close_price, open_price, low_price, high_price, volume = updater.stock_info(ticker)
+				
+				#create dictionary
+				stock = {
+					"name": name,
+					"ticker": ticker, 
+					"price": close_price,
+					"change": close_price - previous_close_price,
+					"change_percentage": (close_price - previous_close_price) / previous_close_price * 100,
+				}
+				stocks.append(stock)
+				count += 1
+
+			except:
+				continue
+
+		return render_template("home.html", user=session["user"], stocks = stocks)
+
 	return redirect(url_for("index"))
+
+
 
 
 # helper functions for register password check
