@@ -57,6 +57,7 @@ def stock_info(ticker):
 	return info["price"], info["close_price"], info["open_price"], info["low_price"], info["high_price"], info["volume"]
 
 def update_stocks(s):
+	print("[" + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "]: Updating...")
 	client = MongoClient()
 	db = client.winydb
 
@@ -110,7 +111,7 @@ def ordered_daily_time_series_full(ticker):
 def main():
 	# Create a scheduler
 	s = sched.scheduler(time.time, time.sleep)
-	s.enter(900, 1, update_stocks, (s,))
+	s.enter(0, 1, update_stocks, (s,))
 	s.run()
 
 if __name__ == "__main__":
