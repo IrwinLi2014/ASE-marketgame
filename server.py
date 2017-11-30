@@ -619,6 +619,7 @@ def join_group():
                                total_market_value = 0.0,
                                total_gain = 0.0,
                                total_gain_percentage = 0.0,
+                               group=group_name,
                                money=100000)
     return render_template('not_game.html', error=True)
    
@@ -656,7 +657,7 @@ def create_group():
             {"$set": {"group": group_name}}
         )
         # return render_template("game.html", error=True)
-        return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0, money=100000)
+        return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0, group=group_name, money=100000)
     return render_template('not_game.html', error=True)
 
 
@@ -675,7 +676,7 @@ def leaderboard():
 			)
     		value += price * stock["shares"]
     	unranked.append((group["name"], value))
-    ranked = sorted(unranked, key=lambda k: k[1])
+    ranked = sorted(unranked, key=lambda k: k[1], reverse=True)
     return render_template("leaderboard.html", teams=ranked)
 
 if __name__ == "__main__":

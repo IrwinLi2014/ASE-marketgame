@@ -49,6 +49,12 @@
                 shares.value = new_shares - old_shares; //it should really just be new_shares but how add_stock works is new_shares <- new shares + old_shares
                 form.appendChild(shares);
 
+                var games = document.createElement("input");
+                games.name = "games";
+                games.value = "true";
+                games.type = 'hidden';
+                form.appendChild(games);
+
                 document.body.appendChild(form);
 
                 form.submit();
