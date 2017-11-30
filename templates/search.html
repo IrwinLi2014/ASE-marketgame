@@ -52,6 +52,8 @@
         <!--Form-->
         <div style = "width: 100%; clear: both">
             {% if in_game %}
+            <h4>Free Cash:</h4>
+            <p>${{ '{0:.2f}'.format(money) }}</p>
             <form method=POST action="{{ url_for('add_stock') }}">
             <h4>Add Stock to Game Portfolio</h4>
                 <input type='hidden' name='name' value='{{ name }}'>
@@ -60,7 +62,7 @@
                 <input type='hidden' name='games' value=true>
             
                 <label for='shares'>Shares</label>
-                <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>
+                <input type='number' min='{{ -current_holdings }}' max="{{ max_shares }}" step="1" name='shares' placeholder='number of shares' style="width: 173px">
                 
                 <button type='submit' class='btn btn-primary' id='game'>Submit</button>
             </form> 

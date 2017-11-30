@@ -232,8 +232,15 @@ def search():
 		users = mongo.db.users
 		login_user = users.find_one({'name' : session["user"]})
 		stocks = login_user["stocks"]
+
+		###########################
+		# TODO: RESET GROUP NAMES #
+		###########################
 		in_game = login_user["group"] != ""
+		groups = mongo.db.groups
+		group = groups.find_one({"name": login_user["group"]})
 		current_holdings = 0
+		max_shares = group["money"] // close_price
 		for stock in stocks:
 			if stock["ticker"] == ticker:
 				current_holdings = stock["shares"]
@@ -266,6 +273,8 @@ def search():
                                script = script,
                                div = div,
                                current_holdings = current_holdings,
+                               max_shares = max_shares,
+                               money=group["money"],
                                in_game=in_game)
 		
 	except Exception as e:
