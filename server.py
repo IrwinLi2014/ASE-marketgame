@@ -149,45 +149,45 @@ def stock_info(ticker):
 
 @app.route("/profile", methods=["GET"])
 def profile():
-	try:
-		users = mongo.db.users
-		login_user = users.find_one({'name' : session['user']})
+	users = mongo.db.users
+	login_user = users.find_one({'name' : session['user']})
 
-		# if user is an admin, then load the admin page
-		if login_user["admin"]:
-			return render_template("admin.html")
+	# if user is an admin, then load the admin page
+	if login_user["admin"]:
+		return render_template("admin.html")
 
-		stocks = login_user['stocks']
+	stocks = login_user['stocks']
 
-		total_cost = 0
-		total_market_value = 0
-		total_gain = 0
-		total_gain_percentage = 0
+	total_cost = 0
+	total_market_value = 0
+	total_gain = 0
+	total_gain_percentage = 0
 
-		for stock in stocks:
-			ticker = stock['ticker']
-			# stock['price'], previous_close_price, *rest = stock_info(ticker)
-			stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
-			# previous_close_price = 40
-			
-			stock['change'] = stock['price'] - previous_close_price
-			stock['change_percentage'] = stock['change'] / stock['price'] * 100
-			stock['market_value'] = stock['price'] * stock['shares']
-			stock['gain'] = stock['market_value'] - stock['cost']
-			if stock['shares'] == 0:
-				stock['gain_percentage'] = 0
-			else:
-				stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+	for stock in stocks:
+		ticker = stock['ticker']
+		# stock['price'], previous_close_price, *rest = stock_info(ticker)
+		stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
+		users.update_one(
+			{ 'name': session["user"], 'stocks.ticker': stock["ticker"] },
+			{ '$set': {'stocks.$.price': stock['price']}}
+		)
+		
+		stock['change'] = stock['price'] - previous_close_price
+		stock['change_percentage'] = stock['change'] / stock['price'] * 100
+		stock['market_value'] = stock['price'] * stock['shares']
+		stock['gain'] = stock['market_value'] - stock['cost']
+		if stock['shares'] == 0:
+			stock['gain_percentage'] = 0
+		else:
+			stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
 
-			total_cost += stock['cost']
-			total_market_value += stock['market_value'] 
-			total_gain = total_market_value - total_cost
-			total_gain_percentage = total_gain / total_cost * 100
+		total_cost += stock['cost']
+		total_market_value += stock['market_value'] 
+		total_gain = total_market_value - total_cost
+		total_gain_percentage = total_gain / total_cost * 100
 
-		return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+	return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
 
-	except:
-		return "ERROR: AlphaVantage server is overloaded"
 
 
 
@@ -415,8 +415,11 @@ def games():
                         ticker = stock['ticker']
                         # stock['price'], previous_close_price, *rest = stock_info(ticker)
                         stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
-                        # previous_close_price = 40
-                        
+                        groups.update_one(
+                            { 'name': users_list["name"], 'stocks.ticker': stock["ticker"] },
+                            { '$set': {'stocks.$.price': stock['price']}}
+                        )
+
                         stock['change'] = stock['price'] - previous_close_price
                         stock['change_percentage'] = stock['change'] / stock['price'] * 100
                         stock['market_value'] = stock['price'] * stock['shares']
@@ -606,8 +609,20 @@ def create_group():
 @app.route("/leaderboard", methods=["GET"])
 def leaderboard():
     groups = mongo.db.groups
-    unranked = list(groups.find({}))
-    ranked = sorted(unranked, key=lambda k: k[""])
+    stocks = mongo.db.stocks
+    unranked = []
+    for group in groups.find({}):
+    	value = group["money"]
+    	for stock in group["stocks"]:
+    		price = stocks.find_one({"ticker": stock["ticker"]})["price"]
+    		groups.update_one(
+				{ 'name': group["name"], 'stocks.ticker': stock["ticker"] },
+				{ '$set': {'stocks.$.price': price}}
+			)
+    		value += price * stock["shares"]
+    	unranked.append((group["name"], value))
+    ranked = sorted(unranked, key=lambda k: k[1])
+    return render_template("leaderboard.html", teams=ranked)
 
 if __name__ == "__main__":
 	app.secret_key = 'mysecret'

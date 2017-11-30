@@ -12,7 +12,7 @@
                   <a class="nav-link" href="{{ url_for('games') }}">Games</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('games') }}">Leaderboard<span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard<span class="sr-only">(current)</span></a>
                 </li>
 {% endblock %}
 
@@ -28,13 +28,20 @@
                 <th scope="col">Portfolio Value</th>
         	</thead>
         	<tbody>
-        		<!--{% for team in teams %} order first by rank-->
-                <tr>
+        		<!-- order first by rank-->
+                <!-- <tr>
                     <td>team name 1</td>
                     <td>rank 1</td>
                     <td>portfolio value 1</td>
+                </tr> -->
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team[0] }}</td>
+                    <td>{{ loop.index }}</td>
+                    <td>${{ '{0:.2f}'.format(team[1]) }}</td>
                 </tr>
-          		<!--{% endfor %}-->
+          		{% endfor %}
+
             </tbody>
         </table>
 {% endblock %}
