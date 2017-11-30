@@ -81,7 +81,7 @@ def home():
 
 			except:
 				continue
-				
+
 		fp_url = "https://newsapi.org/v2/top-headlines?sources=financial-post&apiKey=e439238bd7bc4cde8d2937a0178554b0"
 		result = requests.get(fp_url).json()
 
@@ -618,7 +618,8 @@ def join_group():
                                total_cost = group["total_cost"],
                                total_market_value = 0.0,
                                total_gain = 0.0,
-                               total_gain_percentage = 0.0)
+                               total_gain_percentage = 0.0,
+                               money=100000)
     return render_template('not_game.html', error=True)
    
 @app.route("/create_group", methods=["POST", "GET"])
@@ -655,7 +656,7 @@ def create_group():
             {"$set": {"group": group_name}}
         )
         # return render_template("game.html", error=True)
-        return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+        return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0, money=100000)
     return render_template('not_game.html', error=True)
 
 
