@@ -138,52 +138,52 @@ C:100, 1: Missing method docstring (missing-docstring)
 C:109, 1: Missing method docstring (missing-docstring)
 C:112, 1: Missing method docstring (missing-docstring)
 W:  1, 0: Unused import pytest (unused-import)
+W:  2, 0: Unused import logout from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import login from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import stock_info from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_lower from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import MongoClient from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import has_capital from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import Flask from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import MongoClient from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import abort from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import output_file from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import requests from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import jsonify from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import login from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import global_id from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import datetime from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import flash from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import has_special from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import render_template from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import url_for from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import logout from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import sys from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import register from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import games from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import figure from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import bcrypt from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import profile from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import has_lower from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import stock_info from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import join_group from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import add_stock from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import create_group from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import index from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import has_nums from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import home from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import re from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import create_account from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import render_template from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import updater from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import add_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import id_of_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_nums from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import requests from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import search from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import url_for from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import re from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import json from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import profile from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import components from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import sys from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import Spectral11 from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import request from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import jsonify from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import leaderboard from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import session from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import components from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import check_date_overlap from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import abort from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import add_admin from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import search from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import json from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import add_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import has_special from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import show from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import datetime from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import figure from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import Spectral11 from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import updater from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import index from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import check_date_overlap from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import home from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import output_file from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import create_group from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import global_id from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import PyMongo from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import id_of_game from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import add_stock from wildcard import (unused-wildcard-import)
 W:  2, 0: Unused import redirect from wildcard import (unused-wildcard-import)
-W:  2, 0: Unused import request from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import register from wildcard import (unused-wildcard-import)
+W:  2, 0: Unused import join_group from wildcard import (unused-wildcard-import)
 W:  6, 0: Unused import flask_pymongo (unused-import)
 C:  3, 0: external import "import pandas" comes before "from server import *" (wrong-import-order)
 C:  4, 0: standard import "import unittest" comes before "import pytest" (wrong-import-order)
@@ -201,13 +201,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |15     |NC         |NC         |13.33       |0.00     |
+|method   |15     |15         |=          |13.33       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
+|function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -228,13 +228,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |92     |70.23 |NC       |NC         |
+|code      |92     |70.23 |92       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |1      |0.76  |NC       |NC         |
+|docstring |1      |0.76  |1        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |5      |3.82  |NC       |NC         |
+|comment   |5      |3.82  |5        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |33     |25.19 |NC       |NC         |
+|empty     |33     |25.19 |33       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -245,9 +245,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -258,13 +258,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |41     |NC       |NC         |
+|convention |41     |41       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |127    |NC       |NC         |
+|warning    |127    |127      |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -302,4 +302,4 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -10.00/10
+Your code has been rated at -10.00/10 (previous run: -10.00/10, +0.00)
