@@ -51,7 +51,7 @@ def home():
 		stocks = [] #list of stock dictionaries
 		count = 0
 		for ticker in tickers:
-			if count >= 10:
+			if count >= 5:
 				break
 			try:
 				#get name

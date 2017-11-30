@@ -4,19 +4,63 @@
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-    <!--Bokeh-->
     <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/css/styles.css"> 
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+    <script type="text/javascript" src="../static/js/script.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
+
+    <script>
+      function autofill() {
+        var ticker = document.getElementById("search").value;
+        var url = "http://search.xignite.com/Search/Suggest?parameter=XigniteFinancials.GetCompanyBalanceSheet.Identifier&term=" + ticker + "&tags=XNYS,XNAS";
+        fetch(url)
+        .then(
+          function(response) {
+            if (response.status !== 200) {
+              console.log('Looks like there was a problem. Status Code: ' +
+                response.status);
+              return;
+            }
+
+            // Examine the text in the response
+            response.json().then(function(data) {
+              var searchresults = document.getElementById("searchresults");
+
+            /*
+              console.log(searchresults);
+              console.log(searchresults.length);
+              searchresults.remove(0);
+              console.log(searchresults.options.length);
+            
+              while (searchresults.options.length > 0) {                
+                searchresults.remove(0);
+              }  
+            */
+
+              for (var i = 0; i < data.Results.length; i++) {
+                 var option = document.createElement('option');
+                 option.innerHTML = data.Results[i].Text;
+                 option.value = data.Results[i].Value;
+                 searchresults.appendChild(option);
+              }
+
+            });
+          }
+        )
+        .catch(function(err) {
+          console.log('Fetch Error :-S', err);
+        });   
+      }
+    </script>
     
     <!-- Custom -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../static/css/styles.css"> 
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
-    <script type="text/javascript" src="../static/js/script.js"></script>
-
+   
+  
     {% block header %}{% endblock %}
    
     <title>{% block title %}{% endblock %}</title>
@@ -35,11 +79,11 @@
           
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
-            	{% block nav %}
+              {% block nav %}
               {% endblock %}
             </ul>
             <form method=POST action="{{ url_for('search') }}" class="form-inline mt-2 mt-md-0">
-                <input class="form-control mr-sm-2" type="text" id= "search" name="search" placeholder="search for stock" aria-label="Search" list="searchresults" autocomplete="off">
+                <input class="form-control mr-sm-2" type="text" id= "search" name="search" placeholder="search for stock" aria-label="Search" list="searchresults" autocomplete="off" onkeyup="autofill()">
                 <datalist id="searchresults"></datalist>
                 <button class="btn btn-outline-success my-2 my-sm-0 srch-btn" type="submit">Search</button>
             </form>

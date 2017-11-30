@@ -13,47 +13,49 @@
         var row_index = e.parentNode.parentNode.rowIndex; 
         var new_shares = top_gainers.rows[row_index].cells[5].innerHTML;
 
-        if (isInt(new_shares) && new_shares >= 0) {
-                //send form to server
-                var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "{{ url_for('add_stock') }}";   
+        if (isInt(new_shares) && new_shares > 0) {
+            //send form to server
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "{{ url_for('add_stock') }}";   
+        
+            var ticker = document.createElement("input"); 
+            ticker.name = "ticker";
+            ticker.value = top_gainers.rows[row_index].cells[1].innerHTML;
+            ticker.type='hidden';
+            form.appendChild(ticker);
+
+            var name = document.createElement("input"); 
+            name.name = "name"; 
+            name.value = top_gainers.rows[row_index].cells[0].innerHTML;
+            name.type='hidden';
+            form.appendChild(name);
+
+            var close_price = document.createElement("input");
+            close_price.name = "close_price";
+            close_price.value = top_gainers.rows[row_index].cells[2].innerHTML;
+            close_price.type='hidden';
+            form.appendChild(close_price);
+
+            var shares = document.createElement("input");
+            shares.name = "shares";
+            shares.value = new_shares;
+            shares.type='hidden';
+            form.appendChild(shares);
+
+            var games = document.createElement("input");
+            games.name = "games";
+            games.value = false;
+            games.type='hidden';
+            form.appendChild(games);
+
+            document.body.appendChild(form);
+
+            form.submit();
             
-                var ticker = document.createElement("input"); 
-                ticker.name = "ticker";
-                ticker.value = top_gainers.rows[row_index].cells[1].innerHTML;
-                ticker.type='hidden';
-                form.appendChild(ticker);
-
-                var name = document.createElement("input"); 
-                name.name = "name"; 
-                name.value = top_gainers.rows[row_index].cells[0].innerHTML;
-                name.type='hidden';
-                form.appendChild(name);
-
-                var close_price = document.createElement("input");
-                close_price.name = "close_price";
-                close_price.value = top_gainers.rows[row_index].cells[2].innerHTML;
-                close_price.type='hidden';
-                form.appendChild(close_price);
-
-                var shares = document.createElement("input");
-                shares.name = "shares";
-                shares.value = new_shares;
-                shares.type='hidden';
-                form.appendChild(shares);
-
-                var games = document.createElement("input");
-                games.name = "games";
-                games.value = false;
-                games.type='hidden';
-                form.appendChild(games);
-
-                document.body.appendChild(form);
-
-                form.submit();
-                
-            }
+        } else {
+            alert("Please enter a valid number of shares");
+        }
     }
 
     </script>
@@ -85,50 +87,53 @@
 
 
 {% block content %}
-        <h2>Top 10 Gainers</h2>
-        <table id='top_gainers' class='table table-hover table-bordered table-condensed table-striped' border='1'>
-        <thead>
-                <th scope="col">Name</th>
-                <th scope="col">Ticker</th>
-                <th scope="col">Last Price ($) </th>
-                <th scope="col">Day Change ($) </th>
-                <th scope="col">Day Change (%) </th>
-                <th scope="col">Shares</th>
-          </thead>
-          <tbody>
-            {% for stock in stocks %}
-                <tr>
-                    <td >{{ stock["name"] }}</td>
-                    <td>{{ stock["ticker"] }}</td>
-                    <td>{{ '{0:.2f}'.format(stock["price"]) }}</td>
-                    <td>{{ '{0:.2f}'.format(stock["change"]) }}</td>
-                    <td>{{ '{0:.2f}'.format(stock["change_percentage"]) }}</td>
-                    <td contenteditable="true"></td>
-                    <td>
-                        <button type="button" onclick="add_shares(this)">add</button>
-                    </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-
-        </table>
-
-<div class="container">
-  <div class="row">
-    {% for l in links %}
-      <div class="col-md-3 news">
-          <div class="thumbnail">
-            <a href="{{ l[0] }}">
-              <img src="{{ l[1] }}" alt="img" style="width:100%">
-              <div class="caption">
-                <p> {{ l[2] }} </p>
+    <h2>Latest News</h2>
+    <div class="container">
+      <div class="row">
+        {% for l in links %}
+          <div class="col-md-3 news">
+              <div class="thumbnail">
+                <a href="{{ l[0] }}">
+                  <img src="{{ l[1] }}" alt="img" style="width:100%">
+                  <div class="caption">
+                    <p> {{ l[2] }} </p>
+                  </div>
+                </a>
               </div>
-            </a>
           </div>
+        {% endfor %}
+        
       </div>
-    {% endfor %}
-    
-  </div>
-</div>
+    </div>
+
+    <br>
+
+    <h2>Top 5 Gainers</h2>
+    <table id='top_gainers' class='table table-hover table-bordered table-condensed table-striped' border='1'>
+    <thead>
+            <th scope="col">Name</th>
+            <th scope="col">Ticker</th>
+            <th scope="col">Last Price ($) </th>
+            <th scope="col">Day Change ($) </th>
+            <th scope="col">Day Change (%) </th>
+            <th scope="col">Shares</th>
+      </thead>
+      <tbody>
+        {% for stock in stocks %}
+            <tr>
+                <td >{{ stock["name"] }}</td>
+                <td>{{ stock["ticker"] }}</td>
+                <td>{{ '{0:.2f}'.format(stock["price"]) }}</td>
+                <td>{{ '{0:.2f}'.format(stock["change"]) }}</td>
+                <td>{{ '{0:.2f}'.format(stock["change_percentage"]) }}</td>
+                <td contenteditable="true"></td>
+                <td>
+                    <button type="button" onclick="add_shares(this)">add</button>
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+    </table>
 
 {% endblock %}
