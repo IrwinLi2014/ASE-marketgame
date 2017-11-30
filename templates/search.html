@@ -3,8 +3,11 @@
 {% block header %}
     <script>
         // $(document).ready(function () {
-        //     $("#personal").click(function() {
-        //         alert("hello");
+        //     $("#game").click(function() {
+        //         var name = $("#name").val();
+        //         var ticker = 
+        //         alert(name);
+        //         $.post("/add_stock", {"game": true});
         //     })
         // })
     </script>
@@ -49,11 +52,12 @@
         <!--Form-->
         <div style = "width: 100%; clear: both">
             {% if in_game %}
-            <form method=POST action="{{ url_for('add_game_stock') }}">
+            <form method=POST action="{{ url_for('add_stock') }}">
             <h4>Add Stock to Game Portfolio</h4>
                 <input type='hidden' name='name' value='{{ name }}'>
                 <input type='hidden' name='ticker' value='{{ ticker }}'>
                 <input type='hidden' name='close_price' value='{{ close_price }}'>
+                <input type='hidden' name='games' value=true>
             
                 <label for='shares'>Shares</label>
                 <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>
@@ -67,6 +71,7 @@
                 <input type='hidden' name='name' value='{{ name }}'>
                 <input type='hidden' name='ticker' value='{{ ticker }}'>
                 <input type='hidden' name='close_price' value='{{ close_price }}'>
+                <input type='hidden' name='games' value=false>
             
                 <label for='shares'>Shares</label>
                 <input type='number' min='{{ -current_holdings }}' step="1" name='shares' placeholder='number of shares'>

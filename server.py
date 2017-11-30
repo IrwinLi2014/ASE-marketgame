@@ -276,8 +276,21 @@ def search():
 
 @app.route("/add_stock", methods=["POST"])
 def add_stock():
+	print(request.form)
 
-	users = mongo.db.users
+	if (request.form["games"] == "true"):
+		users = mongo.db.users
+		name = users.find_one({'name' : session["user"]})["group"]
+		users = mongo.db.groups
+		current = users.find_one({'name' : name})
+		stocks = current["stocks"]
+	else:
+		users = mongo.db.users
+		current = users.find_one({'name' : session["user"]})
+		stocks = current["stocks"]
+		name = session["user"]
+
+	print(name)
 	ticker = request.form['ticker']
 	close_price = float(request.form['close_price'])
 
@@ -290,7 +303,6 @@ def add_stock():
 	else:
 		shares = int(request.form['shares'])
 
-	stocks = users.find_one({'name' : session["user"]})["stocks"]
 	existing_stock = None
 	for stock in stocks:
 		if stock["ticker"] == ticker:
@@ -298,7 +310,7 @@ def add_stock():
 
 	if existing_stock is None:
 		users.update_one(
-			{ 'name' : session["user"] },
+			{ 'name' : name },
 			{'$push': {
 				'stocks': {
 					'name': request.form['name'],
@@ -315,29 +327,41 @@ def add_stock():
 				}
 			}
 		)
+		users.update_one(
+			{'name': name},
+			{'$set': {'money': current["money"] - close_price * int(shares)}}
+		)
 
 	else:
 		new_shares = existing_stock["shares"] + shares
 		if new_shares == 0:
 			users.update(
-				{ 'name': session["user"], 'stocks.ticker': ticker },
+				{ 'name': name, 'stocks.ticker': ticker },
 				{ '$pull': { 
 					'stocks': {'ticker': ticker }
 					}
 				}
 			)
 
+			users.update_one(
+				{'name': name},
+				{'$set': {'money': current["money"] - close_price * int(shares)}}
+			)
+
 		else:
 			new_cost = close_price * shares + existing_stock["cost"]
 			users.update(
-				{ 'name': session["user"], 'stocks.ticker': ticker },
+				{ 'name': name, 'stocks.ticker': ticker },
 				{ '$set': {
 					'stocks.$.shares': new_shares,
 					'stocks.$.cost': new_cost,
+					'money': current["money"] - close_price * int(shares)
 					}
 				}
 			)
 
+	if (request.form["games"] == "true"):
+		return redirect(url_for("games"))
 	return redirect(url_for("profile"))
 
 @app.route("/games")
@@ -363,16 +387,52 @@ def games():
 
         id = res["id"]
         global global_id
-        global_id = id
+        
 
         if cur_date > game_start and cur_date < game_end:
+            global_id = id
             game_groups = res["groups"]
             for group in game_groups:
                 users_list = groups.find_one({'name': group})
                 if login_user['name'] in users_list['users']:
-                    return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
+                    stocks = users_list['stocks']
+
+                    total_cost = 0
+                    total_market_value = 0
+                    total_gain = 0
+                    total_gain_percentage = 0
+
+                    for stock in stocks:
+                        ticker = stock['ticker']
+                        # stock['price'], previous_close_price, *rest = stock_info(ticker)
+                        stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
+                        # previous_close_price = 40
+                        
+                        stock['change'] = stock['price'] - previous_close_price
+                        stock['change_percentage'] = stock['change'] / stock['price'] * 100
+                        stock['market_value'] = stock['price'] * stock['shares']
+                        stock['gain'] = stock['market_value'] - stock['cost']
+                        if stock['shares'] == 0:
+                            stock['gain_percentage'] = 0
+                        else:
+                            stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+
+                        total_cost += stock['cost']
+                        total_market_value += stock['market_value'] 
+                        total_gain = total_market_value - total_cost
+                        total_gain_percentage = total_gain / total_cost * 100
+
+                    return render_template("game.html",
+                                           stocks=users_list["stocks"],
+                                           total_cost = total_cost,
+                                           total_market_value = total_market_value,
+                                           total_gain = total_gain,
+                                           total_gain_percentage = total_gain_percentage,
+                                           group=users_list["name"],
+                                           money=users_list["money"])
 
         if cur_date >= reg_start and cur_date <= reg_end:
+            global_id = id
             # you want to start rendering the template
             # you want to retrieve the list of groups the user was invited to
             
@@ -449,8 +509,7 @@ def add_game():
                   'end_date': request.form['date2'],
                   'reg_start_date': request.form['regdate1'],
                   'reg_end_date': request.form['regdate2'],
-                  'admin': login_user['name'],
-                  'money': request.form['money']})
+                  'admin': login_user['name']})
     return render_template("game_creation.html", error = True)
 
 @app.route("/add_admin", methods=["POST"])
@@ -479,7 +538,7 @@ def join_group():
                 }
                 }
             )
-
+    group = groups.find_one({"name": group_name})
 
     games = mongo.db.games
     cur_game = games.find_one({'id' : global_id})
@@ -488,7 +547,13 @@ def join_group():
             {"name": login_user["name"]},
             {"$set": {"group": group_name}}
         )
-        return render_template("game.html", error=True)
+        # return render_template("game.html", error=True)
+        return render_template("game.html",
+                               stocks=group["stocks"],
+                               total_cost = group["total_cost"],
+                               total_market_value = 0.0,
+                               total_gain = 0.0,
+                               total_gain_percentage = 0.0)
     return render_template('not_game.html', error=True)
    
 @app.route("/create_group", methods=["POST", "GET"])
@@ -512,7 +577,7 @@ def create_group():
 
 
     # Add a group with the group name and the invitees list: group name, invitees, users
-    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list, 'stocks': []})
+    groups.insert({'name' : group_name, 'owner' : owner, 'invitees': invitees_list, 'users': users_list, 'stocks': [], 'money': 100000})
 
     # add the group name to the game
     games.update({'id' : global_id}, {'$push': {'groups': group_name}})
@@ -524,7 +589,8 @@ def create_group():
             {"name": login_user["name"]},
             {"$set": {"group": group_name}}
         )
-        return render_template("game.html", error=True)
+        # return render_template("game.html", error=True)
+        return render_template("game.html", stocks=[], total_cost = 0.0, total_market_value = 0.0, total_gain = 0.0, total_gain_percentage = 0.0)
     return render_template('not_game.html', error=True)
 
 
