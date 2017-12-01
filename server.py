@@ -91,7 +91,7 @@ def home():
 
 		links=[]
 		for x in result['articles']:
-			links.append((x['url'],x['urlToImage'],x['title']))
+			links.append((x['url'], x['urlToImage'], x['title']))
 			#print(x['title']);
 			#news_links.append(x['url'])
 			#img_links.append(x['urlToImage'])
@@ -100,7 +100,7 @@ def home():
 		links=links[0:4]
 		#news_links = news_links[0:4]
 		#img_links = img_links[0:4]
-		return render_template("home.html", user=session["user"], stocks = stocks, links=links)
+		return render_template("home.html", user=session["user"], stocks=stocks, links=links)
 	return redirect(url_for("index"))
 
 
@@ -184,9 +184,9 @@ def stock_info(ticker):
 	print(result.status_code)
 	result = result.json()
 	daily_time_series = result["Time Series (Daily)"]
-	ordered_daily_time_series = sorted(daily_time_series.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	ordered_daily_time_series = sorted(daily_time_series.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
 	previous_day = ordered_daily_time_series[1]
-	previous_close_price = float(previous_day[1][ "4. close"])
+	previous_close_price = float(previous_day[1]["4. close"])
 
 	most_recent_day = ordered_daily_time_series[0]
 	open_price = float(most_recent_day[1]["1. open"])
@@ -201,7 +201,7 @@ def stock_info(ticker):
 	result = result.json()
 	daily_time_series_full = result["Time Series (Daily)"]
 	#list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
-	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
 	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
 
 
@@ -227,8 +227,8 @@ def profile():
 		# stock['price'], previous_close_price, *rest = stock_info(ticker)
 		stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
 		users.update_one(
-			{ 'name': session["user"], 'stocks.ticker': stock["ticker"] },
-			{ '$set': {'stocks.$.price': stock['price']}}
+			{'name': session["user"], 'stocks.ticker': stock["ticker"]},
+			{'$set': {'stocks.$.price': stock['price']}}
 		)
 		
 		stock['change'] = stock['price'] - previous_close_price
@@ -245,7 +245,7 @@ def profile():
 		total_gain = total_market_value - total_cost
 		total_gain_percentage = total_gain / total_cost * 100
 
-	return render_template("profile.html", stocks=stocks, total_cost = total_cost, total_market_value = total_market_value, total_gain = total_gain, total_gain_percentage = total_gain_percentage)
+	return render_template("profile.html", stocks=stocks, total_cost=total_cost, total_market_value=total_market_value, total_gain=total_gain, total_gain_percentage=total_gain_percentage)
 
 
 
@@ -315,24 +315,24 @@ def search():
 		y_close.append(day[4])
 
 	p = figure(title='Historical Stock Prices for %s' % ticker, x_axis_label='Date', x_axis_type='datetime')
-	p.line(x = x_date, y = y_close, line_width = 2)
+	p.line(x=x_date, y=y_close, line_width=2)
 
 	script, div = components(p)
 
 	return render_template("search.html",
-                           ticker = ticker,
-                           close_price = close_price,
-                           previous_close_price = previous_close_price,
-                           price_change_str = price_change_str,
-                           open_price = open_price,
-                           low_price = low_price,
-                           high_price = high_price,
-                           volume = volume_str,
-                           name = name,
-                           script = script,
-                           div = div,
-                           current_holdings = current_holdings,
-                           max_shares = max_shares,
+                           ticker=ticker,
+                           close_price=close_price,
+                           previous_close_price=previous_close_price,
+                           price_change_str=price_change_str,
+                           open_price=open_price,
+                           low_price=low_price,
+                           high_price=high_price,
+                           volume=volume_str,
+                           name=name,
+                           script=script,
+                           div=div,
+                           current_holdings=current_holdings,
+                           max_shares=max_shares,
                            money=money,
                            in_game=in_game)
 		
@@ -346,7 +346,7 @@ def search():
 def add_stock():
 	print(request.form)
 
-	if (request.form["games"] == "true"):
+	if request.form["games"] == "true":
 		users = mongo.db.users
 		name = users.find_one({'name' : session["user"]})["group"]
 		users = mongo.db.groups
@@ -378,7 +378,7 @@ def add_stock():
 
 	if existing_stock is None:
 		users.update_one(
-			{ 'name' : name },
+			{'name' : name},
 			{'$push': {
 				'stocks': {
 					'name': request.form['name'],
@@ -401,24 +401,24 @@ def add_stock():
 		new_shares = existing_stock["shares"] + shares
 		if new_shares == 0:
 			users.update(
-				{ 'name': name, 'stocks.ticker': ticker },
-				{ '$pull': { 
-					'stocks': {'ticker': ticker }
+				{'name': name, 'stocks.ticker': ticker},
+				{'$pull': {
+					'stocks': {'ticker': ticker}
 					}
 				}
 			)
 		else:
 			new_cost = close_price * shares + existing_stock["cost"]
 			users.update(
-				{ 'name': name, 'stocks.ticker': ticker },
-				{ '$set': {
+				{'name': name, 'stocks.ticker': ticker},
+				{'$set': {
 					'stocks.$.shares': new_shares,
 					'stocks.$.cost': new_cost,
 					}
 				}
 			)
 
-	if (request.form["games"] == "true"):
+	if request.form["games"] == "true":
 		users.update_one(
 			{'name': name},
 			{'$set': {'money': current["money"] - close_price * int(shares)}}
@@ -439,7 +439,6 @@ def games():
     results = [res for res in cursor]
     cur_date = datetime.now()
     invited_groups = []
-   
     for res in results:
 
         game_start = datetime.strptime(res.get("start_date"), '%Y-%m-%d')
@@ -449,7 +448,6 @@ def games():
 
         id = res["id"]
         global global_id
-        
 
         if cur_date > game_start and cur_date < game_end:
             global_id = id
@@ -469,8 +467,8 @@ def games():
                         # stock['price'], previous_close_price, *rest = stock_info(ticker)
                         stock['price'], previous_close_price, *rest = updater.stock_info(ticker)
                         groups.update_one(
-                            { 'name': users_list["name"], 'stocks.ticker': stock["ticker"] },
-                            { '$set': {'stocks.$.price': stock['price']}}
+                            {'name': users_list["name"], 'stocks.ticker': stock["ticker"]},
+                            {'$set': {'stocks.$.price': stock['price']}}
                         )
 
                         stock['change'] = stock['price'] - previous_close_price
@@ -489,10 +487,10 @@ def games():
 
                     return render_template("game.html",
                                            stocks=users_list["stocks"],
-                                           total_cost = total_cost,
-                                           total_market_value = total_market_value,
-                                           total_gain = total_gain,
-                                           total_gain_percentage = total_gain_percentage,
+                                           total_cost=total_cost,
+                                           total_market_value=total_market_value,
+                                           total_gain=total_gain,
+                                           total_gain_percentage=total_gain_percentage,
                                            group=users_list["name"],
                                            money=users_list["money"])
 
@@ -523,7 +521,7 @@ def games():
                 if res['name'] == login_user['name']:
                     continue
                 all_users.append(res['name'])
-            return render_template("register.html", id = id, invited_groups = invited_groups, all_users = all_users)
+            return render_template("register.html", id=id, invited_groups=invited_groups, all_users=all_users)
     return "ERROR: Currently not a registration or a game period"
 
 
@@ -533,7 +531,7 @@ def id_of_game(game):
 
     results = [res for res in cursor]
     for res in results:
-        id+=1
+        id += 1
     return id
 
 def check_date_overlap(date1, date2, date3, date4):
@@ -548,15 +546,15 @@ def add_game():
     new_id = id_of_game(games) + 1
 
     if request.form['regdate1'] > request.form['regdate2']:
-        return render_template("admin.html", registration_error = True)
+        return render_template("admin.html", registration_error=True)
     if request.form['date1'] > request.form['date2']:
-        return render_template("admin.html", game_error = True)
+        return render_template("admin.html", game_error=True)
     if request.form['regdate2'] > request.form['date1']:
-        return render_template("admin.html", reg_game_error = True)
+        return render_template("admin.html", reg_game_error=True)
     if datetime.strptime(request.form['regdate2'], '%Y-%m-%d') < datetime.now():
-        return render_template("admin.html", cur_reg_error = True)
+        return render_template("admin.html", cur_reg_error=True)
     if datetime.strptime(request.form['date1'], '%Y-%m-%d') < datetime.now():
-        return render_template("admin.html", cur_game_error = True)
+        return render_template("admin.html", cur_game_error=True)
 
     cursor = games.find({})
     results = [res for res in cursor]
@@ -564,9 +562,9 @@ def add_game():
         overlap_1 = check_date_overlap(request.form['date1'], request.form['date2'], res['start_date'], res['end_date'])
         overlap_2 = check_date_overlap(request.form['regdate1'], request.form['regdate2'], res['reg_start_date'], res['reg_end_date'])
         if overlap_1 == True:
-            return render_template("admin.html", game_overlap = True)
+            return render_template("admin.html", game_overlap=True)
         if overlap_2 == True:
-            return render_template("admin.html", registration_overlap = True)
+            return render_template("admin.html", registration_overlap=True)
 
     games.insert({'id' : new_id,
                   'groups' : [],
@@ -615,10 +613,10 @@ def join_group():
         # return render_template("game.html", error=True)
         return render_template("game.html",
                                stocks=group["stocks"],
-                               total_cost = group["total_cost"],
-                               total_market_value = 0.0,
-                               total_gain = 0.0,
-                               total_gain_percentage = 0.0,
+                               total_cost=group["total_cost"],
+                               total_market_value=0.0,
+                               total_gain=0.0,
+                               total_gain_percentage=0.0,
                                group=group_name,
                                money=100000)
     return render_template('not_game.html', error=True)
@@ -671,8 +669,8 @@ def leaderboard():
     	for stock in group["stocks"]:
     		price = stocks.find_one({"ticker": stock["ticker"]})["price"]
     		groups.update_one(
-				{ 'name': group["name"], 'stocks.ticker': stock["ticker"] },
-				{ '$set': {'stocks.$.price': price}}
+				{'name': group["name"], 'stocks.ticker': stock["ticker"]},
+				{'$set': {'stocks.$.price': price}}
 			)
     		value += price * stock["shares"]
     	unranked.append((group["name"], value))
