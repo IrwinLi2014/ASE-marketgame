@@ -60,7 +60,7 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response.status_code, 200)
 
 	def add_stock(self, name, ticker, shares, cost):
-		return self.app.post('/add_stock', data=dict(name = name, ticker=ticker, shares=shares, cost=cost))
+		return self.app.post('/add_stock', data=dict(name=name, ticker=ticker, shares=shares, cost=cost))
 
 	def test_add_stock(self):
 		
@@ -68,8 +68,8 @@ class MarketGameTests(unittest.TestCase):
 		self.login("abc@gmail.com", "hello")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
 		response_2 = self.add_stock('Google', 'GOOG', "5", "5")
-		self.assertEqual(response_1.status_code,302)
-		self.assertEqual(response_2.status_code,302)
+		self.assertEqual(response_1.status_code, 302)
+		self.assertEqual(response_2.status_code, 302)
 		with app.app_context():
 			user = mongo.db.users.find_one({'name' : "abc@gmail.com"})
 		stocks = user["stocks"]
@@ -88,10 +88,10 @@ class MarketGameTests(unittest.TestCase):
 		self.register('abc@gmail.com', 'hello', 'hello')
 		self.login("abc@gmail.com", "hello")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
-		self.assertEqual(response_1.status_code,302)
+		self.assertEqual(response_1.status_code, 302)
 
 		response_2 = self.app.get("/profile")
-		self.assertEqual(response_2.status_code,200)
+		self.assertEqual(response_2.status_code, 200)
 		print(response_2.data)
 		self.assertEqual("<td>Google</td>" in response_2.data.decode("utf-8"), True)
 
@@ -104,7 +104,7 @@ class MarketGameTests(unittest.TestCase):
 		mock_get_a.return_value.json.return_value = a_data
 		mock_get_b.return_value = pandas.DataFrame(b_data)
 		response = self.app.post('/search', data=dict(search='goog'))
-		self.assertEqual(response.status_code,200)
+		self.assertEqual(response.status_code, 200)
 
 	def logout(self):
 		return self.app.post('/logout')
