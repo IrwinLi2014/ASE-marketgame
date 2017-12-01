@@ -1,6 +1,7 @@
 
 import requests
-import sched, time
+import sched
+import time
 import re
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
@@ -46,7 +47,7 @@ def add_stock(ticker, close_price):
 def stock_info(ticker):
 	client = MongoClient()
 	db = client.winydb
-	info =  db.stocks.find_one({"ticker": ticker})
+	info = db.stocks.find_one({"ticker": ticker})
 
 	# If we cannot find info, add the stock to the db, and try again
 	if info == None:
