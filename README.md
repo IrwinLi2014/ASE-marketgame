@@ -1,6 +1,8 @@
 # ASE-marketgame
 
 [![Build Status](https://travis-ci.org/wanlinxie/ASE-marketgame.svg?branch=master)](https://travis-ci.org/wanlinxie/ASE-marketgame)
+[![Coverage Status](https://coveralls.io/repos/github/wanlinxie/ASE-marketgame/badge.svg)](https://coveralls.io/github/wanlinxie/ASE-marketgame)
+
 
 ## Deployment
 For deployment, first install the requirements through pip3 after creating and entering an isolated Python environment using `virtualenv`

@@ -83,7 +83,7 @@ def update_stocks(s):
 		)
 
 	# repeat in 15 minutes
-	s.enter(900, 1, update_stocks, (s,))
+	s.enter(300, 1, update_stocks, (s,))
 
 
 def ordered_daily_time_series_full(ticker):
