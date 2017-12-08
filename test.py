@@ -31,17 +31,17 @@ class MarketGameTests(unittest.TestCase):
 		)
 
 	def test_register(self):
-		response = self.register('abc@gmail.com', 'hello', 'hello')
+		response = self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.assertEqual(response.status_code, 200)
 
 	def test_register_password_fail(self):
-		response = self.register('abc@gmail.com', 'hello', 'nopenope')
+		response = self.register('abc@gmail.com', 'Hello123', 'nopenope')
 		self.assertEqual("<strong>ERROR:</strong> Passwords do not match" in response.data.decode("utf-8"), True)
 		self.assertEqual(response.status_code, 200)
 
 	def test_register_username_fail(self):
-		self.register('abc@gmail.com', 'hello', 'hello')
-		response = self.register('abc@gmail.com', 'hello', 'hello')
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		response = self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.assertEqual("<strong>ERROR:</strong> Username already exists" in response.data.decode("utf-8"), True)
 		self.assertEqual(response.status_code, 200)
 
@@ -49,12 +49,12 @@ class MarketGameTests(unittest.TestCase):
 		return self.app.post('/login', data=dict(username=username, password=password))
 
 	def test_login(self):
-		self.register('abc@gmail.com', 'hello', 'hello')
-		response = self.login('abc@gmail.com', 'hello')
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		response = self.login('abc@gmail.com', 'Hello123')
 		self.assertEqual(response.status_code, 302)
 
 	def test_login_fail(self):
-		self.register('abc@gmail.com', 'hello', 'hello')
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		response = self.login('abc@gmail.com', 'nopenope')
 		self.assertEqual("<strong>ERROR:</strong> Invalid username or password" in response.data.decode("utf-8"), True)
 		self.assertEqual(response.status_code, 200)
@@ -64,8 +64,8 @@ class MarketGameTests(unittest.TestCase):
 
 	def test_add_stock(self):
 		
-		self.register('abc@gmail.com', 'hello', 'hello')
-		self.login("abc@gmail.com", "hello")
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
 		response_2 = self.add_stock('Google', 'GOOG', "5", "5")
 		self.assertEqual(response_1.status_code, 302)
@@ -85,8 +85,8 @@ class MarketGameTests(unittest.TestCase):
 			assert False
 		
 	def test_profile(self):
-		self.register('abc@gmail.com', 'hello', 'hello')
-		self.login("abc@gmail.com", "hello")
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5")
 		self.assertEqual(response_1.status_code, 302)
 
@@ -110,8 +110,8 @@ class MarketGameTests(unittest.TestCase):
 		return self.app.post('/logout')
 
 	def test_logout(self):
-		self.register('abc@gmail.com', 'hello', 'hello')
-		self.login("abc@gmail.com", "hello")
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
 		response = self.logout()
 		self.assertEqual(response.status_code, 302)
 
