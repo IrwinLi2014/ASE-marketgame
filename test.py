@@ -73,7 +73,6 @@ class MarketGameTests(unittest.TestCase):
 		return self.app.post('/add_stock', data=dict(name=name, ticker=ticker, shares=shares, close_price=close_price, games=games))
 
 	def test_add_stock(self):
-		
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.login("abc@gmail.com", "Hello123")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5", "false")
