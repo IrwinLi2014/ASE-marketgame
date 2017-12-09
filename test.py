@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 import flask_pymongo
 import updater
+import datetime
 # import flask
 # from flask import session
 
@@ -20,15 +21,27 @@ class MarketGameTests(unittest.TestCase):
 
 	def tearDown(self):
 		with app.app_context():
-			mongo.db.users.remove({})
-			mongo.db.groups.remove({})
-			mongo.db.games.remove({})
+			mongo.db.users.delete_many({})
+			mongo.db.groups.delete_many({})
+			mongo.db.games.delete_many({})
 
 
 
 ###############
 #### tests ####
 ###############
+
+	def test_index(self):
+		response = self.app.get("/index")
+		self.assertEqual(response.status_code, 200)
+
+	def test_create_account(self):
+		response = self.app.get("/create_account")
+		self.assertEqual(response.status_code, 200)
+
+	def test_home_redirect(self):
+		response = self.app.get("/home")
+		self.assertEqual(response.status_code, 302)
 
 	def register(self, username, password, confirmPassword):
 		return self.app.post(
@@ -46,6 +59,10 @@ class MarketGameTests(unittest.TestCase):
 	def test_register_password_fail(self):
 		response = self.register('abc@gmail.com', 'Hello123', 'nopenope')
 		self.assertEqual("<strong>ERROR:</strong> Passwords do not match" in response.data.decode("utf-8"), True)
+		self.assertEqual(response.status_code, 200)
+
+		response = self.register('abc@gmail.com', 'nopenope', 'nopenope')
+		self.assertTrue("Password must have at least 3 of" in response.data.decode("utf-8"))
 		self.assertEqual(response.status_code, 200)
 
 	def test_register_username_fail(self):
@@ -71,7 +88,6 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response.status_code, 200)
 
 
-
 	def add_stock(self, name, ticker, shares, close_price, games):
 		return self.app.post('/add_stock', data=dict(name=name, ticker=ticker, shares=shares, close_price=close_price, games=games))
 
@@ -79,7 +95,7 @@ class MarketGameTests(unittest.TestCase):
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.login("abc@gmail.com", "Hello123")
 		response_1 = self.add_stock('Google', 'GOOG', "5", "5", "false")
-		response_2 = self.add_stock('Google', 'GOOG', "5", "5", "false") 
+		response_2 = self.add_stock('Google', 'GOOG', "5", "5", "false")
 		response_3 = self.add_stock('Google', 'GOOG', "0", "5", "false") #test empty user input for shares
 		self.assertEqual(response_1.status_code, 302)
 		self.assertEqual(response_2.status_code, 302)
@@ -95,27 +111,87 @@ class MarketGameTests(unittest.TestCase):
 				print("found")
 				self.assertEqual(stock['shares'], 10)
 
-		if not found:
-			assert False
+		assert found
+		# if not found:
+		# 	assert False
 
 		response_4 = self.add_stock('Apple', 'AAPL', "", "5", "false")
 		self.assertEqual(response_4.status_code, 302)
 		for stock in stocks:
-			if stock['ticker'] == 'AAPL':
-				assert False
+			self.assertTrue(stock['ticker'] != 'AAPL')
 
 		response_5 = self.add_stock('Facebook', 'FB', "5", "5", "false")
 		response_6 = self.add_stock('Facebook', 'FB', "-5", "5", "false")
 		self.assertEqual(response_5.status_code, 302)
 		self.assertEqual(response_6.status_code, 302)
 		for stock in stocks:
-			if stock['ticker'] == 'FB':
-				print("WTF")
-				print(stock['ticker'])
-				print(stock["shares"])
-				assert False
+			self.assertTrue(stock['ticker'] != 'FB')
+			# if stock['ticker'] == 'FB':
+			# 	assert False
 			
-			
+	def test_add_stock_game(self):
+		today = datetime.date.today()
+		tomorrow = today + datetime.timedelta(days=1)
+		reg_start_date = today - datetime.timedelta(days=2)
+		reg_end_date = today - datetime.timedelta(days=1)
+
+		# format dates to string
+		today = datetime.datetime.strftime(today, '%Y-%m-%d')
+		tomorrow = datetime.datetime.strftime(tomorrow, '%Y-%m-%d')
+		reg_start_date = datetime.datetime.strftime(reg_start_date, '%Y-%m-%d')
+		reg_end_date = datetime.datetime.strftime(reg_end_date, '%Y-%m-%d')
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
+
+		with app.app_context():
+			mongo.db.groups.insert_one({
+				'name': 'group_one',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 100000,
+				'users': []
+			})
+			mongo.db.games.insert_one({
+				'id': 0,
+				'reg_start_date': reg_start_date,
+				'reg_end_date': reg_end_date,
+				'start_date': today,
+				'end_date': tomorrow
+			})
+
+		self.join_group('group_one')
+
+		response_1 = self.add_stock('Google', 'GOOG', "5", "5", "true")
+		response_2 = self.add_stock('Google', 'GOOG', "5", "5", "true") 
+		response_3 = self.add_stock('Google', 'GOOG', "0", "5", "true") #test empty user input for shares
+		self.assertEqual(response_1.status_code, 302)
+		self.assertEqual(response_2.status_code, 302)
+		self.assertEqual(response_3.status_code, 302)
+		with app.app_context():
+			group = mongo.db.groups.find_one({'name' : "group_one"})
+		stocks = group["stocks"]
+
+		found = False
+		for stock in stocks:
+			if stock['ticker'] == 'GOOG':
+				found = True
+				print(stock)
+				self.assertEqual(stock['shares'], 10)
+
+		assert found
+
+		response_4 = self.add_stock('Apple', 'AAPL', "", "5", "true")
+		self.assertEqual(response_4.status_code, 302)
+		for stock in stocks:
+			self.assertTrue(stock['ticker'] != 'AAPL')
+
+		response_5 = self.add_stock('Facebook', 'FB', "5", "5", "true")
+		response_6 = self.add_stock('Facebook', 'FB', "-5", "5", "true")
+		self.assertEqual(response_5.status_code, 302)
+		self.assertEqual(response_6.status_code, 302)
+		for stock in stocks:
+			self.assertTrue(stock['ticker'] != 'FB')
 
 	def test_profile(self):
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
@@ -127,6 +203,13 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response_2.status_code, 200)
 		self.assertEqual("<td>GOOG</td>" in response_2.data.decode("utf-8"), True)
 
+	def test_profile_admin(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.add_admin("abc@gmail.com")
+		self.login('abc@gmail.com', 'Hello123')
+		response = self.app.get("/profile")
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue("<h4>Create a new game</h4>" in response.data.decode('utf-8'))
 
 
 	def test_search(self):
@@ -147,34 +230,44 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(admin_status, True)
 		self.assertEqual(response.status_code, 200)
 
+		# does not exist
+		response = self.add_admin('aaa@gmail.com')
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue("ERROR: User does not exist" in response.data.decode('utf-8'))
+
 	# add game tests: check all overlap/errors, then check correctness
 	def add_game(self, regdate1, regdate2, date1, date2):
 		return self.app.post('/add_game', data = dict(regdate1=regdate1, regdate2=regdate2, date1=date1, date2=date2))
 
 	def test_add_game_date_error(self):
+		day0 = datetime.date.today()
+		day1 = day0 + datetime.timedelta(days=1)
+		day2 = day0 + datetime.timedelta(days=2)
+		day3 = day0 + datetime.timedelta(days=3)
+
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.login('abc@gmail.com', 'Hello123')
 
 		# registration error
-		self.add_game('2018-01-02', '2018-01-01', '2018-02-01', '2018-02-22')
+		self.add_game(day1, day0, day2, day3)
 		with app.app_context():
 			game_id_1 = mongo.db.games.find_one({'id' : 1})
 		self.assertEqual(game_id_1, None)
 
 		# game error
-		self.add_game('2018-01-02', '2018-01-03', '2018-02-22', '2018-02-01')
+		self.add_game(day0, day1, day3, day2)
 		with app.app_context():
 			game_id_2 = mongo.db.games.find_one({'id' : 1})
 		self.assertEqual(game_id_2, None)
 
 		# reg_game_error
-		self.add_game('2018-01-02', '2018-01-21', '2018-01-20', '2018-02-01')
+		self.add_game(day0, day2, day1, day3)
 		with app.app_context():
 			game_id_3 = mongo.db.games.find_one({'id' : 1})
 		self.assertEqual(game_id_3, None)
 
 		# cur_reg_error
-		self.add_game('2017-12-01', '2017-12-07', '2018-01-20', '2018-02-01')
+		self.add_game(day0 + datetime.timedelta(days=-2), day0 + datetime.timedelta(days=-1), day1, day2)
 		with app.app_context():
 			game_id_4 = mongo.db.games.find_one({'id' : 1})
 		self.assertEqual(game_id_4, None)
@@ -212,16 +305,19 @@ class MarketGameTests(unittest.TestCase):
 
 
 	def join_group(self, group_name):
-
 		return self.app.post('/join_group', data=dict(option=group_name))
 
 	def test_join_group(self):
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.login('abc@gmail.com', 'Hello123')
 
+		# test game does not exist
+		response = self.join_group('group_one')
+		self.assertTrue("This is not a current game period." in response.data.decode("utf-8"))
+
 		with app.app_context():
-			mongo.db.groups.insert({'name': 'group_one', 'stocks': [], 'total_cost': 1000})
-			mongo.db.games.insert({'id': 0, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+			mongo.db.groups.insert_one({'name': 'group_one', 'stocks': [], 'total_cost': 1000})
+			mongo.db.games.insert_one({'id': 0, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
 
 		response = self.join_group('group_one')
 
@@ -241,7 +337,7 @@ class MarketGameTests(unittest.TestCase):
 		self.login('abc@gmail.com', 'Hello123')
 
 		with app.app_context():
-			mongo.db.games.insert({'id': 1, 'id': 1, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+			mongo.db.games.insert_one({'id': 1, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
 
 		response = self.create_group('group_one', 'def@gmail.com,ghi@gmail.com,')
 
@@ -255,8 +351,65 @@ class MarketGameTests(unittest.TestCase):
 		
 
 		self.assertEqual(response.status_code, 200)
+		self.assertTrue("<h1>This is not a current game period. Please click the button below to register for the next game!</h1>" in response.data.decode("utf-8"))
 
+	def test_create_group_ongoing(self):
+		today = datetime.date.today()
+		tomorrow = today + datetime.timedelta(days=1)
 
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.games.insert_one({
+				'id': 0,
+				'reg_start_date': datetime.datetime.strftime(today, '%Y-%m-%d'),
+				'reg_end_date': datetime.datetime.strftime(tomorrow, '%Y-%m-%d'),
+				'start_date': datetime.datetime.strftime(today, '%Y-%m-%d'),
+				'end_date': datetime.datetime.strftime(tomorrow, '%Y-%m-%d')
+			})
+
+		response = self.create_group('group_one', 'def@gmail.com,ghi@gmail.com,')
+
+		with app.app_context():
+			group = mongo.db.groups.find_one({'name' : 'group_one'})
+			game = mongo.db.games.find_one({'id' : 0})
+
+		self.assertEqual(group['owner'], 'abc@gmail.com')
+		self.assertEqual(group['users'], ['abc@gmail.com'])
+		self.assertEqual(group['invitees'], ['def@gmail.com', 'ghi@gmail.com'])
+
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue("<table id='my_portfolio'" in response.data.decode("utf-8"))
+
+		# test out of date range
+		with app.app_context():
+			mongo.db.games.update_one(
+				{'id': 0},
+				{"$set": {'start_date': datetime.datetime.strftime(tomorrow, '%Y-%m-%d')}}
+			)
+			mongo.db.groups.delete_one({"name": "group_one"})
+
+		response = self.create_group('group_one', 'def@gmail.com,ghi@gmail.com,')
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue("This is not a current game period." in response.data.decode("utf-8"))
+
+	def test_create_group_exists(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.games.insert_one({'id': 1, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+
+		self.create_group('group_one', '')
+		self.logout()
+
+		self.register('ghi@gmail.com', 'Hello123', 'Hello123')
+		self.login('ghi@gmail.com', 'Hello123')
+		response = self.create_group('group_one', '')
+
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue("<strong>ERROR:</strong> Group name already exists." in response.data.decode("utf-8"))
 
 	# @patch('pandas_datareader.data.DataReader')
 	# @patch('requests.get')
@@ -268,6 +421,135 @@ class MarketGameTests(unittest.TestCase):
 	# 	mock_get_b.return_value = pandas.DataFrame(b_data)
 	# 	response = self.app.post('/search', data=dict(search='goog'))
 	# 	self.assertEqual(response.status_code, 200)
+
+	def games(self):
+		return self.app.get("/games")
+
+	def test_game_registration(self):
+		day0 = datetime.date.today()
+		day1 = day0 + datetime.timedelta(days=1)
+		day2 = day0 + datetime.timedelta(days=2)
+		day3 = day0 + datetime.timedelta(days=3)
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		response = self.games()
+		self.assertEqual(200, response.status_code)
+		self.assertTrue("ERROR: Currently not a registration or a game period" in response.data.decode("utf-8"))
+
+		with app.app_context():
+			mongo.db.groups.insert_one({
+				'name': 'group_one',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 100000,
+				'users': [],
+				'invitees': ['abc@gmail.com', 'def@gmail.com']
+			})
+			mongo.db.games.insert_one({
+				'id': 0,
+				'reg_start_date': datetime.datetime.strftime(day0, '%Y-%m-%d'),
+				'reg_end_date': datetime.datetime.strftime(day1, '%Y-%m-%d'),
+				'start_date': datetime.datetime.strftime(day2, '%Y-%m-%d'),
+				'end_date': datetime.datetime.strftime(day3, '%Y-%m-%d'),
+				'groups': ['group_one']
+			})
+
+		response = self.games()
+		self.assertEqual(200, response.status_code)
+		self.join_group("group_one")
+		response = self.games()
+		self.assertTrue("This is not a current game period." in response.data.decode("utf-8"))
+
+
+	def test_game(self):
+		today = datetime.date.today()
+		tomorrow = today + datetime.timedelta(days=1)
+		reg_start_date = today - datetime.timedelta(days=2)
+		reg_end_date = today - datetime.timedelta(days=1)
+
+		# format dates to string
+		today = datetime.datetime.strftime(today, '%Y-%m-%d')
+		tomorrow = datetime.datetime.strftime(tomorrow, '%Y-%m-%d')
+		reg_start_date = datetime.datetime.strftime(reg_start_date, '%Y-%m-%d')
+		reg_end_date = datetime.datetime.strftime(reg_end_date, '%Y-%m-%d')
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.groups.insert_one({
+				'name': 'group_one',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 100000,
+				'users': []
+			})
+			mongo.db.games.insert({
+				'id': 0,
+				'reg_start_date': reg_start_date,
+				'reg_end_date': reg_end_date,
+				'start_date': today,
+				'end_date': tomorrow,
+				'groups': ['group_one']
+			})
+
+		self.join_group("group_one")
+		response = self.games()
+		self.assertEqual(200, response.status_code)
+
+		self.add_stock('Google', 'GOOG', "5", "5", "true")
+		response = self.games()
+		self.assertEqual(200, response.status_code)
+		self.assertTrue("GOOG" in response.data.decode('utf-8'))
+
+	def leaderboard(self):
+		return self.app.get("/leaderboard")
+
+	def test_leaderboard(self):
+		today = datetime.date.today()
+		tomorrow = today + datetime.timedelta(days=1)
+		reg_start_date = today - datetime.timedelta(days=2)
+		reg_end_date = today - datetime.timedelta(days=1)
+
+		# format dates to string
+		today = datetime.datetime.strftime(today, '%Y-%m-%d')
+		tomorrow = datetime.datetime.strftime(tomorrow, '%Y-%m-%d')
+		reg_start_date = datetime.datetime.strftime(reg_start_date, '%Y-%m-%d')
+		reg_end_date = datetime.datetime.strftime(reg_end_date, '%Y-%m-%d')
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.groups.insert_one({
+				'name': 'group_one',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 1,
+				'users': []
+			})
+			mongo.db.groups.insert_one({
+				'name': 'group_two',
+				'stocks': [{'price': 0.0, 'market_value': 0.0, 'change_percentage': 0.0, 'change': 0.0, 'gain': 0.0, 'gain_percentage': 0.0, 'name': 'Google', 'cost': 50.0, 'shares': 10, 'ticker': 'GOOG'}],
+				'total_cost': 1000,
+				'money': 2,
+				'users': []
+			})
+			mongo.db.games.insert_one({
+				'id': 0,
+				'reg_start_date': reg_start_date,
+				'reg_end_date': reg_end_date,
+				'start_date': today,
+				'end_date': tomorrow,
+				'groups': ['group_one']
+			})
+		response = self.leaderboard()
+		loc1 = response.data.decode('utf-8').index("group_one")
+		loc2 = response.data.decode('utf-8').index("group_two")
+		self.assertTrue(loc2 < loc1)
+
 
 	def logout(self):
 		return self.app.post('/logout')
@@ -288,9 +570,34 @@ class MarketGameTests(unittest.TestCase):
 		assert type(info[4]) is float
 		assert type(info[5]) is str
 
+	def test_get_close(self):
+		close = updater.get_close('GOOG')
+		assert type(close) is float
 
-if __name__ == '__main__':
-	unittest.main()
+	def test_get_info(self):
+		info = updater.get_info('GOOG')
+		self.assertEqual(len(info), 5)
+		assert type(info[0]) is float
+		assert type(info[1]) is float
+		assert type(info[2]) is float
+		assert type(info[3]) is float
+		assert type(info[4]) is str
+
+	def test_ordered_time_series(self):
+		data = updater.ordered_daily_time_series_full('GOOG')
+		for info in data:
+			self.assertEqual(len(info),6)
+			assert type(info[0]) is str
+			assert type(info[1]) is float
+			assert type(info[2]) is float
+			assert type(info[3]) is float
+			assert type(info[4]) is float
+			assert type(info[5]) is float
+
+
+
+# if __name__ == '__main__':
+# 	unittest.main()
 
 
 

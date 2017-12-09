@@ -109,11 +109,8 @@ def ordered_daily_time_series_full(ticker):
 	return data
 
 
-def main():
+if __name__ == "__main__":
 	# Create a scheduler
 	s = sched.scheduler(time.time, time.sleep)
 	s.enter(0, 1, update_stocks, (s,))
 	s.run()
-
-if __name__ == "__main__":
-	main()
