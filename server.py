@@ -565,6 +565,9 @@ def join_group():
 
     games = mongo.db.games
     cur_game = games.find_one({'id' : global_id})
+    if cur_game is None:
+        return render_template('not_game.html', error=True)
+
     if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
         users.update_one(
             {"name": login_user["name"]},
@@ -609,6 +612,9 @@ def create_group():
 
     # Check if the game is currently ongoing or not and determine which template to render
     cur_game = games.find_one({'id' : global_id})
+    if cur_game is None:
+        return render_template('not_game.html', error=True)
+
     if datetime.strptime(cur_game['start_date'], '%Y-%m-%d') <= datetime.now() and datetime.strptime(cur_game['end_date'], '%Y-%m-%d') >= datetime.now():
         users.update_one(
             {"name": login_user["name"]},

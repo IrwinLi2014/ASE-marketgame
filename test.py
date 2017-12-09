@@ -131,6 +131,128 @@ class MarketGameTests(unittest.TestCase):
 		self.register('abc@gmail.com', 'Hello123', 'Hello123')
 		self.login("abc@gmail.com", "Hello123")
 
+	def add_admin(self, admin_user):
+		return self.app.post('/add_admin', data=dict(admin_user=admin_user))
+
+	def test_add_admin(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.register('def@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+		response = self.add_admin('def@gmail.com')
+		with app.app_context():
+			user = mongo.db.users.find_one({'name' : 'def@gmail.com'})
+		admin_status = user['admin']
+		self.assertEqual(admin_status, True)
+		self.assertEqual(response.status_code, 200)
+
+	# add game tests: check all overlap/errors, then check correctness
+	def add_game(self, regdate1, regdate2, date1, date2):
+		return self.app.post('/add_game', data = dict(regdate1=regdate1, regdate2=regdate2, date1=date1, date2=date2))
+
+	def test_add_game_date_error(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		# registration error
+		self.add_game('2018-01-02', '2018-01-01', '2018-02-01', '2018-02-22')
+		with app.app_context():
+			game_id_1 = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id_1, None)
+
+		# game error
+		self.add_game('2018-01-02', '2018-01-03', '2018-02-22', '2018-02-01')
+		with app.app_context():
+			game_id_2 = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id_2, None)
+
+		# reg_game_error
+		self.add_game('2018-01-02', '2018-01-21', '2018-01-20', '2018-02-01')
+		with app.app_context():
+			game_id_3 = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id_3, None)
+
+		# cur_reg_error
+		self.add_game('2017-12-01', '2017-12-07', '2018-01-20', '2018-02-01')
+		with app.app_context():
+			game_id_4 = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id_4, None)
+
+		# cur_game_error
+		self.add_game('2017-12-01', '2017-12-07', '2017-12-07', '2017-12-22')
+		with app.app_context():
+			game_id_5 = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id_5, None)
+
+	def test_add_game_overlap_error(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+		self.add_game('2018-02-02', '2018-02-05', '2018-03-01', '2018-03-22')
+
+		# registration overlap error
+		self.add_game('2018-02-04', '2018-02-07', '2018-04-01', '2018-04-22')
+		with app.app_context():
+			game_id_1 = mongo.db.games.find_one({'id' : 2})
+		self.assertEqual(game_id_1, None)
+
+		# game overlap error
+		self.add_game('2018-01-02', '2018-01-07', '2018-03-01', '2018-03-22')
+		with app.app_context():
+			game_id_2 = mongo.db.games.find_one({'id' : 2})
+		self.assertEqual(game_id_2, None)
+
+	def test_add_game(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+		self.add_game('2018-02-02', '2018-02-05', '2018-03-01', '2018-03-22')
+		with app.app_context():
+			game_id = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(game_id['id'], 1)
+
+
+	def join_group(self, group_name):
+
+		return self.app.post('/join_group', data=dict(option=group_name))
+
+	def test_join_group(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.groups.insert({'name': 'group_one', 'stocks': [], 'total_cost': 1000})
+			mongo.db.games.insert({'id': 0, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+
+		response = self.join_group('group_one')
+
+		with app.app_context():
+			group_user = mongo.db.groups.find_one({'name': 'group_one'})
+			user_group = mongo.db.users.find_one({'name': 'abc@gmail.com'})
+
+		self.assertEqual(group_user['users'], ['abc@gmail.com'])
+		self.assertEqual(user_group['group'], 'group_one')
+		self.assertEqual(response.status_code, 200)
+
+	def create_group(self, group_name, txtName):
+		return self.app.post('/create_group', data=dict(group_name = group_name, txtName = txtName))
+
+	def test_create_group(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login('abc@gmail.com', 'Hello123')
+
+		with app.app_context():
+			mongo.db.games.insert({'id': 1, 'id': 1, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+
+		response = self.create_group('group_one', 'def@gmail.com,ghi@gmail.com,')
+
+		with app.app_context():
+			group = mongo.db.groups.find_one({'name' : 'group_one'})
+			game = mongo.db.games.find_one({'id' : 1})
+
+		self.assertEqual(group['owner'], 'abc@gmail.com')
+		self.assertEqual(group['users'], ['abc@gmail.com'])
+		self.assertEqual(group['invitees'], ['def@gmail.com', 'ghi@gmail.com'])
+		
+
+		self.assertEqual(response.status_code, 200)
 
 
 
