@@ -202,6 +202,8 @@ def stock_info(ticker):
 	daily_time_series_full = result["Time Series (Daily)"]
 	#list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
 	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
+	#print(type(ordered_daily_time_series_full))
+	#print (close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full)
 	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
 
 
