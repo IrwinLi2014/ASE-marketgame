@@ -12,7 +12,6 @@ install:
 
 script:
     #- python -m pytest test.py
-    - cd marketgame
     - coverage run --rcfile .coveragerc -m unittest test
 
 after_success:
