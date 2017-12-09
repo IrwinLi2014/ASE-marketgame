@@ -153,6 +153,15 @@ class MarketGameTests(unittest.TestCase):
 		response = self.logout()
 		self.assertEqual(response.status_code, 302)
 
+	def test_stock_info(self):
+		info = stock_info('GOOG')
+		assert type(info[0]) is float
+		assert type(info[1]) is float
+		assert type(info[2]) is float
+		assert type(info[3]) is float
+		assert type(info[4]) is float
+		assert type(info[5]) is float
+
 
 if __name__ == '__main__':
 	unittest.main()
