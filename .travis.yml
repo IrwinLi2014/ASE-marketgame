@@ -9,12 +9,12 @@ services:
 install:
     - pip install -r requirements.txt
     - pip install coveralls
-    # - pip install codecov
 
-script: python -m pytest test.py
+script:
+    - python -m pytest test.py
+    - coverage run -m unittest discover
 
 after_success:
-    #- codecov --token fa9d4397-3371-4f85-a79a-0029bed5d256
     - coveralls
 
 branches:
