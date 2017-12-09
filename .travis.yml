@@ -13,7 +13,7 @@ install:
 script:
     #- python -m pytest test.py
     - cd marketgame
-    - coverage run -m unittest test
+    - coverage run --rcfile .coveragerc -m unittest test
 
 after_success:
     - coverage report
