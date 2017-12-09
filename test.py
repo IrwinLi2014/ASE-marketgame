@@ -21,6 +21,8 @@ class MarketGameTests(unittest.TestCase):
 	def tearDown(self):
 		with app.app_context():
 			mongo.db.users.remove({})
+			mongo.db.groups.remove({})
+			mongo.db.games.remove({})
 
 
 
