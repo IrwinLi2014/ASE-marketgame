@@ -164,48 +164,6 @@ def logout():
 	return redirect(url_for("index"))
 
 
-
-
-# helper functions for getting stock data based on ticker
-def stock_info(ticker):
-	
-	# https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=GOOG&interval=1min&apikey=8HEWLV32V6QMXG1L
-	av_intraday_url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + ticker + "&interval=1min&apikey=8HEWLV32V6QMXG1L"
-	print("1: ")
-	result = requests.get(av_intraday_url)
-	print(result.status_code)
-	result = result.json()
-	last_refreshed = result["Meta Data"]["3. Last Refreshed"]
-	close_price = float(result["Time Series (1min)"][last_refreshed]["4. close"])
-
-	av_daily_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&apikey=8HEWLV32V6QMXG1L"
-	print("2: ")
-	result = requests.get(av_daily_url)
-	print(result.status_code)
-	result = result.json()
-	daily_time_series = result["Time Series (Daily)"]
-	ordered_daily_time_series = sorted(daily_time_series.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
-	previous_day = ordered_daily_time_series[1]
-	previous_close_price = float(previous_day[1]["4. close"])
-
-	most_recent_day = ordered_daily_time_series[0]
-	open_price = float(most_recent_day[1]["1. open"])
-	low_price = float(most_recent_day[1]["3. low"])
-	high_price = float(most_recent_day[1]["2. high"])
-	volume = float(most_recent_day[1]["5. volume"])
-
-	av_daily_url_full = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + ticker + "&outputsize=full&apikey=8HEWLV32V6QMXG1L"
-	print("3: ")
-	result = requests.get(av_daily_url_full)
-	print(result.status_code)
-	result = result.json()
-	daily_time_series_full = result["Time Series (Daily)"]
-	#list of tuples in this format: ('2017-11-22', {'5. volume': '2764505', '2. high': '181.7300', '3. low': '180.8000', '4. close': '181.0267', '1. open': '181.3000'})
-	ordered_daily_time_series_full = sorted(daily_time_series_full.items(), key=lambda x: datetime.strptime(x[0], '%Y-%m-%d'), reverse=True)
-	return close_price, previous_close_price, open_price, low_price, high_price, volume, ordered_daily_time_series_full
-
-
-
 @app.route("/profile", methods=["GET"])
 def profile():
 	users = mongo.db.users
