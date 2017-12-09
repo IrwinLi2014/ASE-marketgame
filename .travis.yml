@@ -12,9 +12,11 @@ install:
 
 script:
     #- python -m pytest test.py
+    - cd marketgame
     - coverage run -m unittest test
 
 after_success:
+    - coverage report
     - coveralls
 
 branches:

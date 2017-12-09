@@ -1,14 +1,10 @@
 flask
 pandas-datareader
-oauth2client
 requests
-requests_oauth
 pytest
-pytest-cov
 Flask-PyMongo
 bcrypt
 bokeh==0.12.2
-simplejson
 lxml
 beautifulsoup4
 pymongo
