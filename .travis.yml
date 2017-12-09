@@ -15,7 +15,7 @@ script:
     - coverage run -m unittest test
 
 after_success:
-    - coveralls --data_file=.coverage
+    - coveralls
 
 branches:
   only:
