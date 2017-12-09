@@ -643,6 +643,118 @@ class MarketGameTests(unittest.TestCase):
 		self.assertEqual(response_3.status_code, 200)
 		self.assertTrue("<h4>Add Stock to Game Portfolio</h4>" in response_3.data.decode("utf-8"))
 
+	def test_system1(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
+		self.app.post('/search', data=dict(search='GOOG'))
+		response_1= self.add_stock('Google', 'GOOG', "5", "5", "false")
+		self.assertEqual(response_1.status_code, 302)
+		response_2 = self.logout()
+		self.assertEqual(response_2.status_code, 302)
+
+	def test_system2(self):
+		self.register('admin1@gmail.com', 'Hello123', 'Hello123')
+		self.register('admin2@gmail.com', 'Hello123', 'Hello123')
+
+		self.login('admin1@gmail.com', 'Hello123')
+		self.add_game('2017-11-01', '2017-11-30', '2017-12-07', '2018-05-02')
+		self.add_admin('admin2@gmail.com')
+		with app.app_context():
+			user = mongo.db.users.find_one({'name' : 'admin2@gmail.com'})
+		admin_status = user['admin']
+		self.assertEqual(admin_status, True)
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.register('def@gmail.com', 'Hello123', 'Hello123')
+		
+		self.login("abc@gmail.com", "Hello123")
+		self.create_group('group_one', 'def@gmail.com,')
+
+		with app.app_context():
+			group = mongo.db.groups.find_one({'name' : 'group_one'})
+			game = mongo.db.games.find_one({'id' : 1})
+		self.assertEqual(group['owner'], 'abc@gmail.com')
+		self.assertEqual(group['users'], ['abc@gmail.com'])
+		self.assertEqual(group['invitees'], ['def@gmail.com'])
+
+		response_1 = self.logout()
+		self.assertEqual(response_1.status_code, 302)
+
+		self.login("def@gmail.com", "Hello123")
+		response_2 = self.join_group('group_one')
+
+		self.assertEqual(response_2.status_code, 200)
+		response_3 = self.logout()
+		self.assertEqual(response_3.status_code, 302)
+
+
+	def test_system3(self):
+		today = datetime.date.today()
+		tomorrow = today + datetime.timedelta(days=1)
+		reg_start_date = today - datetime.timedelta(days=2)
+		reg_end_date = today - datetime.timedelta(days=1)
+
+		# format dates to string
+		today = datetime.datetime.strftime(today, '%Y-%m-%d')
+		tomorrow = datetime.datetime.strftime(tomorrow, '%Y-%m-%d')
+		reg_start_date = datetime.datetime.strftime(reg_start_date, '%Y-%m-%d')
+		reg_end_date = datetime.datetime.strftime(reg_end_date, '%Y-%m-%d')
+
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
+
+		with app.app_context():
+			mongo.db.groups.insert_one({
+				'name': 'group_one',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 100000,
+				'users': []
+			})
+			mongo.db.groups.insert_one({
+				'name': 'group_two',
+				'stocks': [],
+				'total_cost': 1000,
+				'money': 100000,
+				'users': []
+			})
+			mongo.db.games.insert_one({
+				'id': 0,
+				'reg_start_date': reg_start_date,
+				'reg_end_date': reg_end_date,
+				'start_date': today,
+				'end_date': tomorrow
+			})
+
+		self.join_group('group_one')
+
+		response_1 = self.add_stock('Google', 'GOOG', "5", "5", "true")
+		self.assertEqual(response_1.status_code, 302)
+		
+		with app.app_context():
+			group = mongo.db.groups.find_one({'name' : "group_one"})
+		stocks = group["stocks"]
+		found = False
+		for stock in stocks:
+			if stock['ticker'] == 'GOOG':
+				found = True
+				print(stock)
+				self.assertEqual(stock['shares'], 5)
+		assert found
+
+		self.register('def@gmail.com', 'Hello123', 'Hello123')
+		self.login("def@gmail.com", "Hello123")
+		self.join_group('group_two')
+
+		self.add_stock('Google', 'GOOG', "5", "5", "true")
+		self.add_stock('Google', 'GOOG', "5", "5", "true")
+
+		response_2 = self.leaderboard()
+		loc1 = response_2.data.decode('utf-8').index("group_one")
+		loc2 = response_2.data.decode('utf-8').index("group_two")
+		self.assertTrue(loc2 < loc1)
+
+
 
 # if __name__ == '__main__':
 # 	unittest.main()
