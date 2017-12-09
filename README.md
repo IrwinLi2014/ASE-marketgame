@@ -1,7 +1,7 @@
 # ASE-marketgame
 
 [![Build Status](https://travis-ci.org/wanlinxie/ASE-marketgame.svg?branch=master)](https://travis-ci.org/wanlinxie/ASE-marketgame)
-[![Coverage Status](https://coveralls.io/repos/github/wanlinxie/ASE-marketgame/badge.svg)](https://coveralls.io/github/wanlinxie/ASE-marketgame)
+[![Coverage Status](https://coveralls.io/repos/github/wanlinxie/ASE-marketgame/badge.svg?branch=master&service=github)](https://coveralls.io/github/wanlinxie/ASE-marketgame)
 
 
 ## Deployment
