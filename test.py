@@ -6,8 +6,8 @@ from unittest.mock import patch
 import flask_pymongo
 import updater
 import datetime
-# import flask
-# from flask import session
+import sched
+import time
 
 TEST_DB = 'new_test.db'
 
@@ -210,11 +210,6 @@ class MarketGameTests(unittest.TestCase):
 		response = self.app.get("/profile")
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue("<h4>Create a new game</h4>" in response.data.decode('utf-8'))
-
-
-	def test_search(self):
-		self.register('abc@gmail.com', 'Hello123', 'Hello123')
-		self.login("abc@gmail.com", "Hello123")
 
 	def add_admin(self, admin_user):
 		return self.app.post('/add_admin', data=dict(admin_user=admin_user))
@@ -594,6 +589,59 @@ class MarketGameTests(unittest.TestCase):
 			assert type(info[4]) is float
 			assert type(info[5]) is float
 
+	def test_scheduler(self):
+		stock_stub = {
+			"price" : 1.,
+			"low_price" : 1.,
+			"open_price" : 1.,
+			"high_price" : 1.,
+			"close_price" : 1.,
+			"ticker" : "GOOG",
+			"volume" : "0"
+		}
+
+		with app.app_context():
+			mongo.db.stocks.delete_many({})
+			mongo.db.stocks.insert_one(stock_stub)
+
+		updater.update()
+
+		with app.app_context():
+			stock = mongo.db.stocks.find_one({'ticker' : "GOOG"})
+
+		self.assertTrue(stock != stock_stub)
+
+	def test_updater_add_stock(self):
+		with app.app_context():
+			mongo.db.stocks.delete_many({})
+
+		updater.add_stock("GOOG", 1000.0)
+		with app.app_context():
+			for stock in mongo.db.stocks.find({}):
+				if stock["ticker"] == "GOOG":
+					assert True
+
+	def test_search(self):
+		self.register('abc@gmail.com', 'Hello123', 'Hello123')
+		self.login("abc@gmail.com", "Hello123")
+			
+		response_1 = self.app.post('/search', data=dict(search='goog'))
+		self.assertEqual(response_1.status_code, 200)
+		self.assertEqual("GOOG" in response_1.data.decode("utf-8"), True)
+		
+		response_2 = self.app.post('/search', data=dict(search='rubbish'))
+		self.assertEqual(response_2.status_code, 200)
+		self.assertEqual("ERROR: invalid ticker" in response_2.data.decode("utf-8"), True)
+
+		# ingame case
+		with app.app_context():
+			mongo.db.groups.insert_one({'name': 'group_one', 'stocks': [], 'total_cost': 1000, 'money':1000})
+			mongo.db.games.insert_one({'id': 0, 'reg_start_date': '2017-11-01', 'reg_end_date': '2017-11-30', 'start_date': '2017-12-07', 'end_date': '2018-05-02'})
+
+		self.join_group('group_one')
+		response_3 = self.app.post('/search', data=dict(search='goog'))
+		self.assertEqual(response_3.status_code, 200)
+		self.assertTrue("<h4>Add Stock to Game Portfolio</h4>" in response_3.data.decode("utf-8"))
 
 
 # if __name__ == '__main__':

@@ -57,19 +57,20 @@ def stock_info(ticker):
 	#close_price, previous_close_price, open_price, low_price, high_price, volume
 	return info["price"], info["close_price"], info["open_price"], info["low_price"], info["high_price"], info["volume"]
 
-def update_stocks(s):
+def update():
 	print("[" + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "]: Updating...")
 	client = MongoClient()
 	db = client.winydb
 
 	# Update the stocks
 	stocks = db.stocks
+	results = []
 	for stock in stocks.find():
 		price, low, high, open_price, volume = get_info(stock["ticker"])
 		close_price = get_close(stock["ticker"])
 
 		# Update each value
-		stocks.update_one(
+		res = stocks.update_one(
 			{"ticker": stock["ticker"]},
 			{"$set": {
 					"price": price,
@@ -81,9 +82,13 @@ def update_stocks(s):
 				}
 			}
 		)
+		results.append(res)
+	return results
 
+def update_stocks(s):
+	update()
 	# repeat in 15 minutes
-	s.enter(300, 1, update_stocks, (s,))
+	return s.enter(300, 1, update_stocks, (s,))
 
 
 def ordered_daily_time_series_full(ticker):
