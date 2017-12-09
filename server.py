@@ -235,10 +235,7 @@ def profile():
 		stock['change_percentage'] = stock['change'] / stock['price'] * 100
 		stock['market_value'] = stock['price'] * stock['shares']
 		stock['gain'] = stock['market_value'] - stock['cost']
-		if stock['shares'] == 0:
-			stock['gain_percentage'] = 0
-		else:
-			stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
+		stock['gain_percentage'] = stock['gain'] / stock['cost'] * 100
 
 		total_cost += stock['cost']
 		total_market_value += stock['market_value'] 
@@ -251,7 +248,6 @@ def profile():
 
 @app.route("/search", methods=["POST"])
 def search():
-	# try:
 	#convert ticker to all-caps
 	ticker = request.form['search'].upper()
 
@@ -336,10 +332,6 @@ def search():
                            money=money,
                            in_game=in_game)
 		
-	# except Exception as e:
-	# 	print(e)
-	# 	return "ERROR: AlphaVantage server is overloaded"
-
 
 
 @app.route("/add_stock", methods=["POST"])
@@ -365,9 +357,16 @@ def add_stock():
 	# add stock to database
 	updater.add_stock(ticker, close_price)
 
+	# #check for empty user input
+	# if len(request.form['shares']) == 0:
+	# 	shares = 0
+	# else:
+	# 	shares = int(request.form['shares'])
+
 	#check for empty user input
-	if len(request.form['shares']) == 0:
-		shares = 0
+	shares = 0
+	if len(request.form['shares']) == 0 or request.form['shares'] == "0":
+		return redirect(url_for("profile"))
 	else:
 		shares = int(request.form['shares'])
 
@@ -425,6 +424,9 @@ def add_stock():
 		)
 		return redirect(url_for("games"))
 	return redirect(url_for("profile"))
+
+
+
 
 @app.route("/games")
 def games():
