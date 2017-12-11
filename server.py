@@ -475,12 +475,11 @@ def games():
 
             # retrieve a list of all users to invite
             all_users = []
-            cursor_2 = users.find({})
-            results_2 = [res for res in cursor_2]
-            for res in results_2:
+            for res in users.find({}):
                 if res['name'] == login_user['name']:
                     continue
-                all_users.append(res['name'])
+                elif res['group'] == ""
+                    all_users.append(res['name'])
             return render_template("register.html", id=id, invited_groups=invited_groups, all_users=all_users)
     return "ERROR: Currently not a registration or a game period"
 
