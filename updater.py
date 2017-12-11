@@ -26,24 +26,6 @@ def get_info(ticker):
 
 	return price, low, high, open_price, volume
 
-def add_stock(ticker, close_price):
-	client = MongoClient()
-	db = client.winydb
-
-	stocks = db.stocks
-	if stocks.find_one({"ticker": ticker}) == None:
-		price, low, high, open_price, volume = get_info(ticker)
-		# close_price = get_close(stock["ticker"])
-		stocks.insert_one({
-					"ticker": ticker,
-					"price": price,
-					"low_price": low,
-					"high_price": high,
-					"open_price": open_price,
-					"close_price": close_price,
-					"volume": volume
-		})
-
 def get_info_backup(ticker):
 	result = requests.get("https://www.marketwatch.com/investing/stock/" + ticker)
 	soup = BeautifulSoup(result.content, "lxml")
@@ -56,6 +38,27 @@ def get_info_backup(ticker):
 	volume = soup.find("span", {"class": "volume"}).find().strip()
 
 	return price, low, high, open_price, volume
+
+def add_stock(ticker, close_price):
+	client = MongoClient()
+	db = client.winydb
+
+	stocks = db.stocks
+	if stocks.find_one({"ticker": ticker}) == None:
+		try:
+			price, low, high, open_price, volume = get_info(stock["ticker"])
+		except ValueError:
+			price, low, high, open_price, volume = get_info_backup(stock["ticker"])
+		# close_price = get_close(stock["ticker"])
+		stocks.insert_one({
+					"ticker": ticker,
+					"price": price,
+					"low_price": low,
+					"high_price": high,
+					"open_price": open_price,
+					"close_price": close_price,
+					"volume": volume
+		})
 
 def stock_info(ticker):
 	client = MongoClient()
