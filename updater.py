@@ -44,6 +44,19 @@ def add_stock(ticker, close_price):
 					"volume": volume
 		})
 
+def get_info_backup(ticker):
+	result = requests.get("https://www.marketwatch.com/investing/stock/" + ticker)
+	soup = BeautifulSoup(result.content, "lxml")
+	data = soup.find_all("span", {"class": ["kv__primary"]})
+	open_price = float(data[0].text[1:])
+	low, high = data[1].text.split(" - ")
+	low = float(low)
+	high = float(high)
+	price = float(soup.find("bg-quote", {"class": "value"}).text)
+	volume = soup.find("span", {"class": "volume"}).find().strip()
+
+	return price, low, high, open_price, volume
+
 def stock_info(ticker):
 	client = MongoClient()
 	db = client.winydb
@@ -66,7 +79,11 @@ def update():
 	stocks = db.stocks
 	results = []
 	for stock in stocks.find():
-		price, low, high, open_price, volume = get_info(stock["ticker"])
+		print("Stock: " + stock["ticker"])
+		try:
+			price, low, high, open_price, volume = get_info(stock["ticker"])
+		except ValueError:
+			price, low, high, open_price, volume = get_info_backup(stock["ticker"])
 		close_price = get_close(stock["ticker"])
 
 		# Update each value
