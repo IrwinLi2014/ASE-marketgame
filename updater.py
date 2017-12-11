@@ -46,9 +46,9 @@ def add_stock(ticker, close_price):
 	stocks = db.stocks
 	if stocks.find_one({"ticker": ticker}) == None:
 		try:
-			price, low, high, open_price, volume = get_info(stock["ticker"])
+			price, low, high, open_price, volume = get_info(ticker)
 		except ValueError:
-			price, low, high, open_price, volume = get_info_backup(stock["ticker"])
+			price, low, high, open_price, volume = get_info_backup(ticker)
 		# close_price = get_close(stock["ticker"])
 		stocks.insert_one({
 					"ticker": ticker,
