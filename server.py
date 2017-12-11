@@ -574,9 +574,13 @@ def join_group():
             {"$set": {"group": group_name}}
         )
         # return render_template("game.html", error=True)
+        total_cost = 0.0
+        for stock in group["stocks"]:
+        	total_cost += stock["cost"]
+
         return render_template("game.html",
                                stocks=group["stocks"],
-                               total_cost=group["total_cost"],
+                               total_cost=total_cost,
                                total_market_value=0.0,
                                total_gain=0.0,
                                total_gain_percentage=0.0,
