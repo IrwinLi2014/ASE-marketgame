@@ -15,8 +15,8 @@
 			
 			<form method=POST action="{{ url_for('register') }}">
 				<div class="form-group">
-					<label for="newEmail">Email Address</label>
-    				<input type="email" class="form-control" id="newEmail" name="username" placeholder="email">
+					<label for="newEmail">Name</label>
+    				<input type="email" class="form-control" id="newEmail" name="username" placeholder="name">
 				</div>
 				{% if username_error %}
 					{% include 'partials/username_error.html' %}
