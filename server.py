@@ -478,7 +478,7 @@ def games():
             for res in users.find({}):
                 if res['name'] == login_user['name']:
                     continue
-                elif res['group'] == ""
+                elif res['group'] == "":
                     all_users.append(res['name'])
             return render_template("register.html", id=id, invited_groups=invited_groups, all_users=all_users)
     return "ERROR: Currently not a registration or a game period"
