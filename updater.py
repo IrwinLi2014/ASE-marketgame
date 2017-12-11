@@ -35,7 +35,7 @@ def get_info_backup(ticker):
 	low = float(low)
 	high = float(high)
 	price = float(soup.find("bg-quote", {"class": "value"}).text)
-	volume = soup.find("span", {"class": "volume"}).find().strip()
+	volume = soup.find("span", {"class": "last-value"}).text.strip()
 
 	return price, low, high, open_price, volume
 
