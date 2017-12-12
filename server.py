@@ -76,6 +76,8 @@ def home():
 					"change": close_price - previous_close_price,
 					"change_percentage": (close_price - previous_close_price) / previous_close_price * 100,
 				}
+				if stock["change_percentage"] >= 15:
+					continue
 				stocks.append(stock)
 				count += 1
 
